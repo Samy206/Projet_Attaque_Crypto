@@ -1,18 +1,22 @@
 #ifndef _H_KEYS
 #define _H_KEYS
 
+#include "Encryption.h"
 
-char g_master_key[24];
-char g_sub_keys[11][24];
-char Etat[23];
+typedef struct Keys
+{
+    char g_master_key[25];
+    char g_sub_keys[11][25];
+}
+Keys;
 
-void generate_master_key();
-void key_schedule_algorithm();
+void generate_master_key(Keys *keys);
+void key_schedule_algorithm(Keys *keys);
 
-char *s_box(char *entry_params);
-char *Substitution(char *Etat);
+int split_message(char * message);
 
-char *p_box(char *entry_params);
-char *Permuttation(char *Etat);
+char xor(char A, char B);
+int binary_to_decimal(char *entry_params);
+void decimal_to_binary(int number,char *entry_params);
 
 #endif
