@@ -6,10 +6,13 @@
 
 int main()
 {
-    char * message = "111111111000000111000000";
-    char * result = malloc(strlen(message) + 1);
-    char * crypted = malloc(strlen(message) + 1);
-    double_present(message,result,crypted);
-    printf("message : %s\nresult :  %s\ncrypted : %s\n",message,result,crypted);
+    Keys * key = malloc(sizeof(Keys));
+    init_key(key);
+    char * message = "111111111111111111111111";
+    char * crypted = malloc(25);
+    present(key,message,crypted);
+    printf("message : %s \ncrypted : %s\n",message,crypted);
+
     return 0;
 }
+

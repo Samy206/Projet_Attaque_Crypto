@@ -1,7 +1,7 @@
-#include "keys.h"
-
 #ifndef _H_ENCRYPTION
 #define _H_ENCRYPTION
+
+#include "keys.h"
 
 char **Etat ;
 
@@ -10,8 +10,8 @@ void Substitution(char *Etat);
 void Permutation(char *Etat);
 
 
-void present(char * message, char * result);
-void double_present(char * message, char * result, char * crypted);
+void present(Keys* keys,char * message, char * result);
+void double_present(Keys* keysA, Keys* keysB,char * message, char * result, char * crypted);
 
 
 

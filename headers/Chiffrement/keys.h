@@ -1,7 +1,7 @@
 #ifndef _H_KEYS
 #define _H_KEYS
 
-#include "Encryption.h"
+
 
 typedef struct Keys
 {
@@ -12,7 +12,7 @@ Keys;
 
 void generate_master_key(Keys *keys);
 void key_schedule_algorithm(Keys *keys);
-
+void init_key(Keys *keys);
 int split_message(char * message);
 
 char xor(char A, char B);

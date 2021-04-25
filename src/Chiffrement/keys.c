@@ -24,8 +24,7 @@ void key_schedule_algorithm(Keys *keys)
     char K_register[81];
     char tmp[81];
     memset(K_register,0,80);
-    int bit_to_copy = 0;
-    int decalage ;
+    int offset ;
     char word_i[5];
     int i,j;
     char comparator;
@@ -46,16 +45,17 @@ void key_schedule_algorithm(Keys *keys)
     for(i = 0; i < 11; i++)
     {
         memset(keys->g_sub_keys[i],0,24);
-        for(j = 0; j < 24; j++) {
-            keys->g_sub_keys[i][j] = K_register[bit_to_copy];
-            bit_to_copy = (bit_to_copy + 1) % 80;
-        };
+        for(j = 40; j < 64; j++)
+        {
+            keys->g_sub_keys[i][j-40] = K_register[j];
+        }
         keys->g_sub_keys[i][24] = '\0';
 
         for (j = 0; j < 80; j++) {
-            decalage = (j + 61) % 80;
-            K_register[decalage] = tmp[j];
+            offset = (j + 61) % 80;
+            K_register[j] = tmp[offset];
         }
+
         for (j = 0; j < 4; j++) {
             word_i[j] = K_register[j];
         }
@@ -64,16 +64,30 @@ void key_schedule_algorithm(Keys *keys)
         for (j = 0; j < 4; j++) {
             K_register[j] = word_i[j];
         }
+
         decimal_to_binary(i+1, word_i);
-        for (j = 62; j <= 65; j++) {
-            comparator = xor(K_register[j], word_i[j - 62]);
+        for (j = 61; j < 65; j++) {
+            comparator = xor(K_register[j], word_i[j - 61]);
             K_register[j] = comparator;
         }
+
         for (j = 0; j < 80; j++) {
             tmp[j] = K_register[j];
         }
     }
 }
+
+void init_key(Keys *keys)
+{
+    //generate_master_key(keys);
+    for(int i = 0 ; i < 24 ; i++)
+    {
+        keys->g_master_key[i] = '0';
+    }
+    keys->g_master_key[24] ='\0';
+    key_schedule_algorithm(keys);
+};
+
 
 int split_message(char * message)
 {

@@ -1,5 +1,5 @@
 #include "../../headers/Chiffrement/Encryption.h"
-
+#include "../../headers/Chiffrement/keys.h"
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -61,6 +61,7 @@ void s_box(char *entry_params)
             break;
     }
 }
+
 void Substitution(char *Etat)
 {
     char word_i[5];
@@ -68,18 +69,17 @@ void Substitution(char *Etat)
     int k ;
     for(int i = 0; i < 24; i++)
     {
-
         word_i[j] = Etat[i];
-
         j++;
+
         if(j == 4)
         {
             word_i[j] ='\0';
             s_box(word_i);
-
             for(k = i - 3 ; k <= i ; k++)
+            {
                 Etat[k] = word_i[k%4];
-
+            }
             j = 0;
         }
     }
@@ -89,33 +89,35 @@ void Substitution(char *Etat)
 void Permutation(char *Etat)
 {
     int i ;
-    int cpt = 0;
-    char c;
+    int cpt = 6;
+
+
+    char tmp[25];
+    for(int i = 0 ; i < 24 ; i++)
+    {
+        tmp[i] = Etat[i];
+    }
+    tmp[24] = '\0';
+
 
     for(i = 1; i < 23; i++)
     {
+        Etat[cpt%23] = tmp[i];
         cpt += 6;
-        c = Etat[i];
-        Etat[i] = Etat[cpt % 23];
-        Etat[cpt % 23] = c;
     }
 }
 
 
-void present(char * message, char * result)
+void present(Keys * keys, char * message, char * result)
 {
-
-    Keys * keys = malloc(sizeof(Keys));
-    generate_master_key(keys);
-    key_schedule_algorithm(keys);
     char comparator;
     int nb_blocs = split_message(message);
 
     for(int i = 0 ; i < nb_blocs ; i++)
     {
+
         for(int j = 0 ; j < 10 ; j++)
         {
-
             for(int k = 0 ; k < 24 ; k++)
             {
                 comparator = xor(Etat[i][k],keys->g_sub_keys[j][k]);
@@ -123,6 +125,7 @@ void present(char * message, char * result)
             }
             Substitution(Etat[i]);
             Permutation(Etat[i]);
+
         }
 
         for(int l = 0 ; l < 24 ; l++)
@@ -132,7 +135,6 @@ void present(char * message, char * result)
         }
 
     }
-
     int j = 0;
     for(int i = 0 ; i < nb_blocs; i++ )
     {
@@ -144,8 +146,8 @@ void present(char * message, char * result)
     result[j] = '\0';
 }
 
-void double_present(char * message, char * result, char * crypted)
+void double_present(Keys* keysA, Keys* keysB,char * message, char * result, char * crypted)
 {
-    present(message,result);
-    present(result,crypted);
+    present(keysA,message,result);
+    present(keysB,result,crypted);
 }
