@@ -13,6 +13,4 @@ void Permutation(char *Etat);
 void present(Keys* keys,char * message, char * result);
 void double_present(Keys* keysA, Keys* keysB,char * message, char * result, char * crypted);
 
-
-
 #endif

@@ -1,8 +1,6 @@
 #ifndef _H_KEYS
 #define _H_KEYS
 
-
-
 typedef struct Keys
 {
     char g_master_key[25];

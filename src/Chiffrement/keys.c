@@ -88,7 +88,6 @@ void init_key(Keys *keys)
     key_schedule_algorithm(keys);
 };
 
-
 int split_message(char * message)
 {
 
@@ -203,8 +202,3 @@ void decimal_to_binary(int number, char * entry_params)
         comparator = pow(2,exposant);
     }
 }
-
-
-
-
-

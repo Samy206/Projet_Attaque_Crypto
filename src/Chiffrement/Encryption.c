@@ -1,11 +1,11 @@
 #include "../../headers/Chiffrement/Encryption.h"
 #include "../../headers/Chiffrement/keys.h"
+
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-
 
 void s_box(char *entry_params)
 {
