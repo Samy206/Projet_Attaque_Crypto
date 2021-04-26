@@ -7,6 +7,72 @@
 #include <string.h>
 #include <math.h>
 
+int split_message_enc(char * message)
+{
+    int taille = strlen(message);
+    int nb_blocs;
+
+    if( (taille % 24) == 0)
+        nb_blocs =  (taille / 24) ;
+    else
+        nb_blocs = (taille / 24) + 1;
+
+    int i;
+    Etat = malloc(nb_blocs * sizeof(char*));
+
+    for(i = 0 ; i < nb_blocs ; i++)
+    {
+        Etat[i] = malloc(25 * sizeof(char));
+        memset(Etat[i],0,25);
+    }
+
+    int cmp = 0;
+    int j = 0;
+    for(i = 0 ; i < taille ; i++)
+    {
+        if( i < (taille - 1) )
+        {
+            if (i % 24 == 0 && cmp == 0 && j != 24)
+            {
+                Etat[cmp][j] = message[i];
+                j++;
+            }
+            else if (i % 24 == 0 && j == 24)
+            {
+                Etat[cmp][j] = '\0';
+
+                j = 0;
+                cmp++;
+                Etat[cmp][j] = message[i];
+                j++;
+
+            }
+            else
+            {
+                Etat[cmp][j] = message[i];
+                j++;
+            }
+        }
+        else {
+
+            if (i % 24 == 23) {
+                Etat[cmp][j] = message[i];
+                j++;
+                Etat[cmp][j] = '\0';
+            } else {
+                for (int k = j; k < 24; k++) {
+                    Etat[cmp][j] = '0';
+                    j++;
+                }
+                Etat[cmp][j] = '\0';
+            }
+        }
+    }
+
+    return nb_blocs;
+}
+
+
 void s_box(char *entry_params)
 {
     int number = binary_to_decimal(entry_params);
@@ -111,7 +177,7 @@ void Permutation(char *Etat)
 void present(Keys * keys, char * message, char * result)
 {
     char comparator;
-    int nb_blocs = split_message(message);
+    int nb_blocs = split_message_enc(message);
 
     for(int i = 0 ; i < nb_blocs ; i++)
     {

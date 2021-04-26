@@ -4,10 +4,73 @@
 
 #include "../../headers/Dechiffrement/Decryption.h"
 
+int split_message_dec(char * message)
+{
+    int taille = strlen(message);
+    int nb_blocs;
+
+    if( (taille % 24) == 0)
+        nb_blocs =  (taille / 24) ;
+    else
+        nb_blocs = (taille / 24) + 1;
+
+    int i;
+    d_Etat = malloc(nb_blocs * sizeof(char*));
+
+    for(i = 0 ; i < nb_blocs ; i++)
+    {
+        d_Etat[i] = malloc(25 * sizeof(char));
+        memset(d_Etat[i],0,25);
+    }
+
+    int cmp = 0;
+    int j = 0;
+    for(i = 0 ; i < taille ; i++)
+    {
+        if( i < (taille - 1) )
+        {
+            if (i % 24 == 0 && cmp == 0 && j != 24)
+            {
+                d_Etat[cmp][j] = message[i];
+                j++;
+            }
+            else if (i % 24 == 0 && j == 24)
+            {
+                d_Etat[cmp][j] = '\0';
+
+                j = 0;
+                cmp++;
+                d_Etat[cmp][j] = message[i];
+                j++;
+
+            }
+            else
+            {
+                d_Etat[cmp][j] = message[i];
+                j++;
+            }
+        }
+        else {
+
+            if (i % 24 == 23) {
+                d_Etat[cmp][j] = message[i];
+                j++;
+                d_Etat[cmp][j] = '\0';
+            } else {
+                for (int k = j; k < 24; k++) {
+                    d_Etat[cmp][j] = '0';
+                    j++;
+                }
+                d_Etat[cmp][j] = '\0';
+            }
+        }
+    }
+
+    return nb_blocs;
+}
+
 void unPermutation(char *d_Etat)
 {
-	printf("\nEntrée dans unPermutation avec : %s", d_Etat);
-
 	int i;
 	int cpt = 6;
 
@@ -19,7 +82,7 @@ void unPermutation(char *d_Etat)
 	tmp[24] = '\0';
 
 	for(i = 1; i < 23; i++)
-	{
+    {
 	    d_Etat[i] = tmp[cpt%23];
 	    cpt += 6;
 	}
@@ -85,101 +148,71 @@ void unSubstitution(char *d_Etat)
 	char word_i[5];
 	int j = 0;
 	int k;
-
-	for(int i = 0; i < strlen(d_Etat) - 1; i++)
+    int size = strlen(d_Etat);
+	for(int i = 0; i < size; i++)
 	{
 	    word_i[j] = d_Etat[i];
 	    j++;
 
 	    if(j == 4)
 	    {
-		word_i[j] ='\0';
-		uns_box(word_i);
-		for(k = i - 3 ; k <= i ; k++)
-		{
-		    d_Etat[k] = word_i[k%4];
-		}
-		j = 0;
+		    word_i[j] ='\0';
+		    uns_box(word_i);
+		    for(k = i - 3 ; k <= i ; k++)
+		    {
+		        d_Etat[k] = word_i[k%4];
+		    }
+		    j = 0;
 	    }
 	}
 }
 
 void unpresent(Keys *used_keys_params, char *crypted, char *decrypted)
 {
-	printf("\n\n \t Decryption process started \n");
 
-	used_keys = used_keys_params;
-	
-	int str_crypted_size = strlen(crypted);
-	int blocks_number = 0;
-
-	if(str_crypted_size % 24 == 0)
-	{
-		blocks_number = str_crypted_size / 24;
-	}
-	else
-	{
-		blocks_number = str_crypted_size / 24 + 1;
-	}
-
-	/* d_Etat = c if c is less than 24 bits */
-	if(blocks_number == 0)
-	{
-		d_Etat = malloc(sizeof(char) * 25 * 1);
-
-		if(!d_Etat){exit(EXIT_FAILURE);}
-		
-		for(int j = 0; j < str_crypted_size; j++)
-		{
-			d_Etat[0][j] = crypted[j];
-		}
-	}
-	else
-	{
-		d_Etat = malloc(sizeof(char) * blocks_number * 25);
-
-		if(!d_Etat){exit(EXIT_FAILURE);}
-
-		for(int i = 0; i < blocks_number; i++)
-		{
-			for(int j = 0; j < str_crypted_size; j++)
-			{
-				d_Etat[i][j] = crypted[j];
-			}
-
-			d_Etat[i][24] = '\0';
-		}
-	}
+    int i,j,k;
+	int blocks_number = split_message_dec(crypted);
 
 	/* d_Etat XOR K11 */
 	char xor_result;
-	for(int i = 0; i < blocks_number; i++)
-	{
-		for(int j = 0; j < str_crypted_size; j++)
-		{
-			xor_result = xor(d_Etat[i][j], used_keys->g_sub_keys[10][j]);
-			d_Etat[i][j] = xor_result;
-		}	
 
-	}
+	for(i = 0 ; i < blocks_number ; i++)
+    {
+        for(k = 0; k < 24; k++)
+        {
+            xor_result = xor(d_Etat[i][k], used_keys_params->g_sub_keys[10][k]);
+            d_Etat[i][k] = xor_result;
+            decrypted[k] = d_Etat[i][k];
+        }
+        d_Etat[i][24] = '\0';
+    }
 
-	/* unpresent, xor with Ki keys must be done in reverse,
-	 * K10 to K1. */
-	for(int i = 0; i < blocks_number; i++)
+/* unpresent, xor with Ki keys must be done in reverse, K10 to K1. */
+    int cmp_dcrypted = 0 ;
+	for(i = 0; i < blocks_number; i++)
 	{
-		for(int j = 10; j >= 0; j--)
+		for(j = 9; j >= 0; j--)
 		{
 			unPermutation(d_Etat[i]);	
 			unSubstitution(d_Etat[i]);
 
-			for(int k = 0; k < 24; k++)
+			for(k = 0; k < 24; k++)
 			{
-				xor_result = xor(d_Etat[i][k], used_keys->g_sub_keys[j][k]);
+				xor_result = xor(d_Etat[i][k], used_keys_params->g_sub_keys[j][k]);
 				d_Etat[i][k] = xor_result;
-				decrypted[k] = d_Etat[i][k];
 			}
 		}
-	
 	}
+
+	for(i = 0 ; i < blocks_number ; i++)
+    {
+	    for(j = 0 ; j < 24 ; j++)
+        {
+            decrypted[cmp_dcrypted] = d_Etat[i][j];
+            cmp_dcrypted++;
+
+        }
+    }
+	decrypted[cmp_dcrypted] = '\0';
 	
 }
