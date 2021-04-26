@@ -6,6 +6,8 @@
 
 void unPermutation(char *d_Etat)
 {
+	printf("\nEntrée dans unPermutation avec : %s", d_Etat);
+
 	int i;
 	int cpt = 6;
 
@@ -137,7 +139,7 @@ void unpresent(Keys *used_keys_params, char *crypted, char *decrypted)
 		d_Etat = malloc(sizeof(char) * blocks_number * 25);
 
 		if(!d_Etat){exit(EXIT_FAILURE);}
-//the problem : d_Etat[0][0] = crypted[0];
+
 		for(int i = 0; i < blocks_number; i++)
 		{
 			for(int j = 0; j < str_crypted_size; j++)
