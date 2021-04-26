@@ -8,10 +8,10 @@ Keys *used_keys;
 
 /* An Etat for decryption.
  * Double dimension in order to decrypt blocks of words. */
-char **d_Etat;
+char *d_Etat;
 
 /* Main decryption process function. */
-void unpresent(Keys *used_keys_params, char **used_state_params, char *crypted, char *decrypted); 
+void unpresent(Keys *used_keys_params, char *crypted, char *decrypted); 
 
 void unPermutation(char *d_Etat);
 void unSubstitution(char *d_Etat);
