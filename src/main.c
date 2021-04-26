@@ -10,7 +10,7 @@ int main()
 {
     Keys * key = malloc(sizeof(Keys));
     init_key(key);
-    char * message = "111111111111111111111111";
+    char * message = "101010010010001011000111";
     char * crypted = malloc(25 * sizeof(char));
     present(key,message,crypted);
     printf("message : %s \ncrypted : %s\n",message,crypted);

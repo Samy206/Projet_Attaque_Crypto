@@ -84,7 +84,7 @@ void unSubstitution(char *d_Etat)
 	int j = 0;
 	int k;
 
-	for(int i = 0; i < 24; i++)
+	for(int i = 0; i < strlen(d_Etat) - 1; i++)
 	{
 	    word_i[j] = d_Etat[i];
 	    j++;
@@ -121,66 +121,63 @@ void unpresent(Keys *used_keys_params, char *crypted, char *decrypted)
 	}
 
 	/* d_Etat = c if c is less than 24 bits */
-/*	if(blocks_number == 0)
+	if(blocks_number == 0)
 	{
 		d_Etat = malloc(sizeof(char) * 25 * 1);
-		if(!d_Etat){ exit(EXIT_FAILURE); }
+
+		if(!d_Etat){exit(EXIT_FAILURE);}
 		
-		for(int i = 0; i < 1; i++)
+		for(int j = 0; j < str_crypted_size; j++)
 		{
-			for(int j = 0; j < str_crypted_size-1; j++)
-			{
-				d_Etat[i][j] = crypted[j];
-			}
+			d_Etat[0][j] = crypted[j];
 		}
 	}
 	else
 	{
 		d_Etat = malloc(sizeof(char) * blocks_number * 25);
-	}
-printf("block_number : %d",blocks_number);
-*/	/* d_Etat = c */
-	d_Etat = malloc(sizeof(char) * str_crypted_size + 1);
-//	for(int i = 0; i < blocks_number; i++)
-//	{
-		for(int j = 0; j < str_crypted_size; j++)
-		{
-			d_Etat[j] = crypted[j];
-		}
 
-		//d_Etat[i][24] = '\0';
-//	}
+		if(!d_Etat){exit(EXIT_FAILURE);}
+//the problem : d_Etat[0][0] = crypted[0];
+		for(int i = 0; i < blocks_number; i++)
+		{
+			for(int j = 0; j < str_crypted_size; j++)
+			{
+				d_Etat[i][j] = crypted[j];
+			}
+
+			d_Etat[i][24] = '\0';
+		}
+	}
 
 	/* d_Etat XOR K11 */
 	char xor_result;
-//	for(int i = 0; i < blocks_number; i++)
-//	{
+	for(int i = 0; i < blocks_number; i++)
+	{
 		for(int j = 0; j < str_crypted_size; j++)
 		{
-
-			xor_result = xor(d_Etat[j], used_keys->g_sub_keys[10][j]);
-			d_Etat[j] = xor_result;
+			xor_result = xor(d_Etat[i][j], used_keys->g_sub_keys[10][j]);
+			d_Etat[i][j] = xor_result;
 		}	
 
-//		d_Etat[i][24] = '\0';
-//	}
+	}
 
 	/* unpresent, xor with Ki keys must be done in reverse,
 	 * K10 to K1. */
-//	for(int i = 0; i < blocks_number; i++)
-//	{
+	for(int i = 0; i < blocks_number; i++)
+	{
 		for(int j = 10; j >= 0; j--)
 		{
-			unPermutation(d_Etat);	
-			unSubstitution(d_Etat);
+			unPermutation(d_Etat[i]);	
+			unSubstitution(d_Etat[i]);
 
-			for(int k = 0; k < str_crypted_size; k++)
+			for(int k = 0; k < 24; k++)
 			{
-				xor_result = xor(d_Etat[j], used_keys->g_sub_keys[j][k]);
-				d_Etat[k] = xor_result;
-				decrypted[k] = d_Etat[k];
+				xor_result = xor(d_Etat[i][k], used_keys->g_sub_keys[j][k]);
+				d_Etat[i][k] = xor_result;
+				decrypted[k] = d_Etat[i][k];
 			}
 		}
+	
 	}
 	
-//}
+}
