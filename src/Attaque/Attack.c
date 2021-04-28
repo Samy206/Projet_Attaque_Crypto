@@ -53,19 +53,17 @@ void * calcul_encryption_A(void * message)
     char *tmp1 = malloc(sizeof(char) * 25);
     Keys *tmp2 = malloc(sizeof(Keys));
 
-    for(int i = 0 ; i < SIZE_ALL/2 ; i++)
+    for(int i = 0 ; i < SIZE_ALL/4 ; i++)
     {
-	iteration_to_key(tmp1,i);
+	    iteration_to_key(tmp1,i);
         init_key(tmp2,tmp1);
 
-	present(tmp2,message,tmp1);
-	g_liste_encryption[i] = char_to_double(tmp1);
+	    present(tmp2,input,tmp1);
+	    g_liste_encryption[i] = char_to_double(tmp1);
     }
 
     free(tmp1);
     free(tmp2);
-    free(input);
-
     pthread_exit(NULL);
 }
 void * calcul_encryption_B(void * message)
@@ -75,74 +73,144 @@ void * calcul_encryption_B(void * message)
     char *tmp1 = malloc(sizeof(char) * 25);
     Keys *tmp2 = malloc(sizeof(Keys));
 
-    for(int i = 0 ; i < SIZE_ALL/2 ; i++)
+    for(int i = SIZE_ALL/4 ; i < SIZE_ALL/2 ; i++)
     {
-	iteration_to_key(tmp1,i);
+	    iteration_to_key(tmp1,i);
         init_key(tmp2,tmp1);
 
-	present(tmp2,message,tmp1);
-	g_liste_encryption[i] = char_to_double(tmp1);
+	    present(tmp2,input,tmp1);
+	    g_liste_encryption[i] = char_to_double(tmp1);
     }
 
     free(tmp1);
     free(tmp2);
-    free(input);
-
     pthread_exit(NULL);
 }
+void * calcul_encryption_C(void * message)
+{
+    char * input = (char *) (message);
+    
+    char *tmp1 = malloc(sizeof(char) * 25);
+    Keys *tmp2 = malloc(sizeof(Keys));
+
+    for(int i = SIZE_ALL/2 ; i < (SIZE_ALL/2+SIZE_ALL/4) ; i++)
+    {
+	    iteration_to_key(tmp1,i);
+        init_key(tmp2,tmp1);
+
+	    unpresent(tmp2,input,tmp1);
+	    g_liste_encryption[i] = char_to_double(tmp1);
+    }
+    free(tmp1);
+    free(tmp2);
+    pthread_exit(NULL);
+}
+void * calcul_encryption_D(void * message)
+{
+    char * input = (char *) (message);
+
+    char *tmp1 = malloc(sizeof(char) * 25);
+    Keys *tmp2 = malloc(sizeof(Keys));
+
+    for(int i = (SIZE_ALL/2+SIZE_ALL/4); i < SIZE_ALL  ; i++)
+    {
+	    iteration_to_key(tmp1,i);
+        init_key(tmp2,tmp1);
+
+	    unpresent(tmp2,input,tmp1);
+	    g_liste_encryption[i] = char_to_double(tmp1);
+    }
+    free(tmp1);
+    free(tmp2);
+    pthread_exit(NULL);
+}
+
+
 void * calcul_decryption_A(void * crypted)
 {
     char * input = (char *) (crypted);
-    
     char *tmp1 = malloc(sizeof(char) * 25);
     Keys *tmp2 = malloc(sizeof(Keys));
 
-    for(int i = 0 ; i < SIZE_ALL/2 ; i++)
+    for(int i = 0 ; i < SIZE_ALL/4 ; i++)
     {
-	iteration_to_key(tmp1,i);
+        iteration_to_key(tmp1,i);
         init_key(tmp2,tmp1);
 
-	unpresent(tmp2,crypted,tmp1);
-	g_liste_decryption[i] = char_to_double(tmp1);
+        present(tmp2,input,tmp1);
+        g_liste_decryption[i] = char_to_double(tmp1);
     }
 
     free(tmp1);
     free(tmp2);
-    free(input);
-
     pthread_exit(NULL);
-
 }
-
 void * calcul_decryption_B(void * crypted)
 {
     char * input = (char *) (crypted);
-    
+
     char *tmp1 = malloc(sizeof(char) * 25);
     Keys *tmp2 = malloc(sizeof(Keys));
 
-    for(int i = 0 ; i < SIZE_ALL/2 ; i++)
+    for(int i = SIZE_ALL/4 ; i < SIZE_ALL/2 ; i++)
     {
-	iteration_to_key(tmp1,i);
+        iteration_to_key(tmp1,i);
         init_key(tmp2,tmp1);
 
-	unpresent(tmp2,crypted,tmp1);
-	g_liste_decryption[i] = char_to_double(tmp1);
+        present(tmp2,input,tmp1);
+        g_liste_decryption[i] = char_to_double(tmp1);
     }
 
     free(tmp1);
     free(tmp2);
-    free(input);
-
     pthread_exit(NULL);
 }
+void * calcul_decryption_C(void * crypted)
+{
+    char * input = (char *) (crypted);
+
+    char *tmp1 = malloc(sizeof(char) * 25);
+    Keys *tmp2 = malloc(sizeof(Keys));
+
+    for(int i = SIZE_ALL/2 ; i < (SIZE_ALL/2+SIZE_ALL/4) ; i++)
+    {
+        iteration_to_key(tmp1,i);
+        init_key(tmp2,tmp1);
+
+        unpresent(tmp2,input,tmp1);
+        g_liste_decryption[i] = char_to_double(tmp1);
+    }
+    free(tmp1);
+    free(tmp2);
+    pthread_exit(NULL);
+}
+void * calcul_decryption_D(void * crypted)
+{
+    char * input = (char *) (crypted);
+
+    char *tmp1 = malloc(sizeof(char) * 25);
+    Keys *tmp2 = malloc(sizeof(Keys));
+
+    for(int i = (SIZE_ALL/2+SIZE_ALL/4); i < SIZE_ALL  ; i++)
+    {
+        iteration_to_key(tmp1,i);
+        init_key(tmp2,tmp1);
+
+        unpresent(tmp2,input,tmp1);
+        g_liste_decryption[i] = char_to_double(tmp1);
+    }
+    free(tmp1);
+    free(tmp2);
+    pthread_exit(NULL);
+}
+
 
 double char_to_double(char *entry)
 {
 	if(!entry) 
 		return -1;
 
-	double res;
+	double res = 0.0;
 	int entry_size = strlen(entry);
 	int cmp = entry_size - 1;
 
@@ -159,32 +227,27 @@ return res;
 
 void calculate_possibilities(char * message, char * crypted)
 {
-	pthread_t threads[4];
+	pthread_t threads[8];
 	int check = 0;
 
 	check = pthread_create(&threads[0],NULL, calcul_encryption_A,message);
-	if(check != 0)
-	printf("c'est la merde 1\n");
-
-/*	printf("check 1: %d\n",check);
 	check = pthread_create(&threads[1],NULL, calcul_encryption_B,message);
-	if(check != 0)
-	printf("c'est la merde 2\n");
+	//check = pthread_create(&threads[2],NULL, calcul_encryption_C,message);
+	//check = pthread_create(&threads[3],NULL, calcul_encryption_D,message);
+	check = pthread_create(&threads[4],NULL, calcul_decryption_A,crypted);
+	check = pthread_create(&threads[5],NULL, calcul_decryption_B,crypted);
+	//check = pthread_create(&threads[6],NULL, calcul_decryption_C,crypted);
+	//check = pthread_create(&threads[7],NULL, calcul_decryption_D,crypted);
 
-	printf("check 2: %d\n",check);
-	check = pthread_create(&threads[2],NULL, calcul_decryption_A,crypted);
-	if(check != 0)
-	printf("c'est la merde 3\n");
 
-	printf("check 3: %d\n",check);
-	check = pthread_create(&threads[3],NULL, calcul_decryption_B,crypted);
-	if(check != 0)
-        printf("c'est la merde 4\n");
-  */ 
 	pthread_join(threads[0],NULL); 
-//	pthread_join(threads[1],NULL); 
-//	pthread_join(threads[2],NULL); 
-//	pthread_join(threads[3],NULL); 
+	pthread_join(threads[1],NULL);
+	//pthread_join(threads[2],NULL);
+	//pthread_join(threads[3],NULL);
+	pthread_join(threads[4],NULL);
+	pthread_join(threads[5],NULL);
+//	pthread_join(threads[6],NULL);
+	//pthread_join(threads[7],NULL);
 
 
 /* Partie pour les nuls
