@@ -10,9 +10,9 @@
 int main()
 {
     Keys * keyA = malloc(sizeof(Keys));
-    generate_keys(keyA);
     Keys * keyB = malloc(sizeof(Keys));
-    generate_keys(keyB);
+	generate_master_key(keyA);
+	generate_master_key(keyB);
 
     char message[25] = "111111111111000000000000";
     char * crypted = malloc(25 * sizeof(char));
@@ -22,6 +22,10 @@ int main()
 
     calculate_possibilities(message,crypted);
 
+/*    for(int i = 0; i < SIZE_ALL; i++)
+    {
+    printf("\n %s | %s \n",g_liste_encryption[i], g_liste_decryption[i] );
+    }*/
 
     return 0;
 }

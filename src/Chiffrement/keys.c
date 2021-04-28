@@ -91,7 +91,7 @@ void init_key(Keys *keys, char * master_key)
     }
     keys->g_master_key[24] ='\0';
     key_schedule_algorithm(keys);
-};
+}
 
 
 char xor(char A, char B)
