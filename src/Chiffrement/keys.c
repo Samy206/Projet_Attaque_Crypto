@@ -77,12 +77,17 @@ void key_schedule_algorithm(Keys *keys)
     }
 }
 
-void init_key(Keys *keys)
+void init_key(Keys *keys, char * master_key)
 {
-    //generate_master_key(keys);
+    if(strlen(master_key) != 24)
+    {
+        printf("strlen : %lu\n", strlen(master_key));
+        return;
+    }
+
     for(int i = 0 ; i < 24 ; i++)
     {
-        keys->g_master_key[i] = '0';
+        keys->g_master_key[i] = master_key[i];
     }
     keys->g_master_key[24] ='\0';
     key_schedule_algorithm(keys);

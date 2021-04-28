@@ -11,7 +11,7 @@ Keys;
 
 void generate_master_key(Keys *keys);
 void key_schedule_algorithm(Keys *keys);
-void init_key(Keys *keys);
+void init_key(Keys *keys,char * master_key);
 
 char xor(char A, char B);
 int binary_to_decimal(char *entry_params);

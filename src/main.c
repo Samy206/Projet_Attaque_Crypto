@@ -1,6 +1,7 @@
 #include "../headers/Chiffrement/keys.h"
 #include "../headers/Chiffrement/Encryption.h"
 #include "../headers/Dechiffrement/Decryption.h"
+#include "../headers/Attaque/Attack.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -8,17 +9,20 @@
 
 int main()
 {
-    Keys * key = malloc(sizeof(Keys));
-    init_key(key);
-    char message[49] = "101010010010001111000111101010010010001111000111";
-    char * crypted = malloc(49 * sizeof(char));
-    present(key,message,crypted);
-    printf("message : %s \ncrypted : %s\n",message,crypted);
+    Keys * keyA = malloc(sizeof(Keys));
+    generate_keys(keyA);
+    Keys * keyB = malloc(sizeof(Keys));
+    generate_keys(keyB);
 
-    char *decrypted = malloc(49 * sizeof(char));
-    unpresent(key, crypted, decrypted);
-    printf("crypted :   %s \ndecrypted : %s\n",crypted,decrypted);
-    unPermutation(message);
+    char message[25] = "111111111111000000000000";
+    char * crypted = malloc(25 * sizeof(char));
+    char * tmp = malloc(25);
+
+    double_present(keyA,keyB,message,tmp,crypted);
+
+    calculate_possibilities(message,crypted);
+
+
     return 0;
 }
 
