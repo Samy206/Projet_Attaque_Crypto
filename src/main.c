@@ -11,8 +11,8 @@ int main()
 {
     Keys * keyA = malloc(sizeof(Keys));
     Keys * keyB = malloc(sizeof(Keys));
-	generate_master_key(keyA);
-	generate_master_key(keyB);
+    init_key(keyA,"000000000000000000010000");
+    init_key(keyB,"000001000100100000011000");
 
     char message[25] = "111111111111000000000000";
     char * crypted = malloc(25 * sizeof(char));
@@ -20,7 +20,7 @@ int main()
 
     double_present(keyA,keyB,message,tmp,crypted);
 
-    calculate_possibilities(message,crypted);
+    //calculate_possibilities(message,crypted);
 
 /*    for(int i = 0; i < SIZE_ALL; i++)
     {

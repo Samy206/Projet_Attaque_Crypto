@@ -1,147 +1,30 @@
 #include "../../headers/Chiffrement/Encryption.h"
 #include "../../headers/Chiffrement/keys.h"
-
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include "../../headers/Usefull_tables.h"
 
-int split_message_enc(char * message)
-{
-    int taille = strlen(message);
-    int nb_blocs;
-
-    if( (taille % 24) == 0)
-        nb_blocs =  (taille / 24) ;
-    else
-        nb_blocs = (taille / 24) + 1;
-
-    int i;
-    Etat = malloc(nb_blocs * sizeof(char*));
-
-    for(i = 0 ; i < nb_blocs ; i++)
-    {
-        Etat[i] = malloc(25 * sizeof(char));
-        memset(Etat[i],0,25);
-    }
-
-    int cmp = 0;
-    int j = 0;
-    for(i = 0 ; i < taille ; i++)
-    {
-        if( i < (taille - 1) )
-        {
-            if (i % 24 == 0 && cmp == 0 && j != 24)
-            {
-                Etat[cmp][j] = message[i];
-                j++;
-            }
-            else if (i % 24 == 0 && j == 24)
-            {
-                Etat[cmp][j] = '\0';
-
-                j = 0;
-                cmp++;
-                Etat[cmp][j] = message[i];
-                j++;
-
-            }
-            else
-            {
-                Etat[cmp][j] = message[i];
-                j++;
-            }
-        }
-        else {
-
-            if (i % 24 == 23) {
-                Etat[cmp][j] = message[i];
-                j++;
-                Etat[cmp][j] = '\0';
-            } else {
-                for (int k = j; k < 24; k++) {
-                    Etat[cmp][j] = '0';
-                    j++;
-                }
-                Etat[cmp][j] = '\0';
-            }
-        }
-    }
-
-    return nb_blocs;
-}
-
-
-void s_box(char *entry_params)
-{
-    int number = binary_to_decimal(entry_params);
-    switch(number) {
-        case 0:
-            decimal_to_binary(12, entry_params);
-            break;
-        case 1:
-            decimal_to_binary(5, entry_params);
-            break;
-        case 2:
-            decimal_to_binary(6, entry_params);
-            break;
-        case 3:
-            decimal_to_binary(11, entry_params);
-            break;
-        case 4:
-            decimal_to_binary(9, entry_params);
-            break;
-        case 5:
-            decimal_to_binary(0, entry_params);
-            break;
-        case 6:
-            decimal_to_binary(10, entry_params);
-            break;
-        case 7:
-            decimal_to_binary(13, entry_params);
-            break;
-        case 8:
-            decimal_to_binary(3, entry_params);
-            break;
-        case 9:
-            decimal_to_binary(14, entry_params);
-            break;
-        case 10:
-            decimal_to_binary(15, entry_params);
-            break;
-        case 11:
-            decimal_to_binary(8, entry_params);
-            break;
-        case 12:
-            decimal_to_binary(4, entry_params);
-            break;
-        case 13:
-            decimal_to_binary(7, entry_params);
-            break;
-        case 14:
-            decimal_to_binary(1, entry_params);
-            break;
-        case 15:
-            decimal_to_binary(2, entry_params);
-            break;
-    }
-}
+int s_box[16] = { 12 , 5 , 6 , 11 , 9 , 0 , 10 , 13 , 3 , 14 , 15 , 8  , 4 , 7 , 1 , 2 };
+int p_box[22] = {6 , 12 , 18 , 1 , 7 , 13 , 19 , 2 , 8 , 14 , 20 , 3 , 9 , 15 , 21 , 4 , 10 , 16 , 22 , 5 , 11 , 17};
 
 void Substitution(char *Etat)
 {
     char word_i[5];
     int j = 0;
     int k ;
+    int decimal;
     for(int i = 0; i < 24; i++)
     {
         word_i[j] = Etat[i];
         j++;
-
         if(j == 4)
         {
             word_i[j] ='\0';
-            s_box(word_i);
+            decimal = binary_to_decimal(word_i);
+            decimal_to_binary(s_box[decimal],word_i);
             for(k = i - 3 ; k <= i ; k++)
             {
                 Etat[k] = word_i[k%4];
@@ -151,65 +34,47 @@ void Substitution(char *Etat)
     }
 }
 
-
 void Permutation(char *Etat)
 {
-    int i ;
-    int cpt = 6;
-
-
     char tmp[25];
-    for(int i = 0 ; i < 24 ; i++)
-    {
-        tmp[i] = Etat[i];
-    }
+
+    strcpy(tmp,Etat);
     tmp[24] = '\0';
 
+    for(int i = 1; i < 23; i++)
+        Etat[p_box[i-1]] = tmp[i];
 
-    for(i = 1; i < 23; i++)
-    {
-        Etat[cpt%23] = tmp[i];
-        cpt += 6;
-    }
 }
-
 
 void present(Keys * keys, char * message, char * result)
 {
-    char comparator;
-    int nb_blocs = split_message_enc(message);
+    char Etat[25] ;
+    strcpy(Etat,message);
+    Etat[24] = '\0';
+    int i, j;
 
-    for(int i = 0 ; i < nb_blocs ; i++)
+    for(i = 0 ; i < 10 ; i++)
     {
-
-        for(int j = 0 ; j < 10 ; j++)
+        for(j = 0 ; j < 24 ; j++)
         {
-            for(int k = 0 ; k < 24 ; k++)
-            {
-                comparator = xor(Etat[i][k],keys->g_sub_keys[j][k]);
-                Etat[i][k] = comparator;
-            }
-            Substitution(Etat[i]);
-            Permutation(Etat[i]);
-
+            if(Etat[j] == keys->g_sub_keys[i][j])
+                Etat[j] = '0';
+            else
+                Etat[j] = '1';
         }
-
-        for(int l = 0 ; l < 24 ; l++)
-        {
-            comparator = xor(Etat[i][l],keys->g_sub_keys[10][l]);
-            Etat[i][l] = comparator;
-        }
-
+        Substitution(Etat);
+        Permutation(Etat);
     }
-    int j = 0;
-    for(int i = 0 ; i < nb_blocs; i++ )
+    for(i = 0 ; i < 24 ; i++)
     {
-        for(int l = 0 ; l < 24 ; l++) {
-            result[j] = Etat[i][l];
-            j++;
-        }
+        if(Etat[i] == keys->g_sub_keys[10][i])
+            Etat[i] = '0';
+        else
+            Etat[i] = '1';
     }
-    result[j] = '\0';
+
+    strcpy(result,Etat);
+    result[24] = '\0';
 }
 
 void double_present(Keys* keysA, Keys* keysB,char * message, char * result, char * crypted)

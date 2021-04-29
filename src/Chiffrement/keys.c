@@ -1,11 +1,13 @@
 #include "../../headers/Chiffrement/keys.h"
 #include "../../headers/Chiffrement/Encryption.h"
-
+#include "../../headers/Usefull_tables.h"
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+
+int s_box[16] = { 12 , 5 , 6 , 11 , 9 , 0 , 10 , 13 , 3 , 14 , 15 , 8  , 4 , 7 , 1 , 2 };
 
 /* Generate a master key of 24 bits. */
 void generate_master_key(Keys * keys)
@@ -28,7 +30,7 @@ void key_schedule_algorithm(Keys *keys)
     char word_i[5];
     int i,j;
     char comparator;
-
+    int decimal ;
     for(i = 0; i < 80 ; i++)
     {
         if(i < 24) {
@@ -60,20 +62,20 @@ void key_schedule_algorithm(Keys *keys)
             word_i[j] = K_register[j];
         }
         word_i[4] = '\0';
-        s_box(word_i);
+        decimal = binary_to_decimal(word_i);
+        decimal_to_binary(s_box[decimal],word_i);
+
         for (j = 0; j < 4; j++) {
             K_register[j] = word_i[j];
         }
-
         decimal_to_binary(i+1, word_i);
         for (j = 61; j < 65; j++) {
-            comparator = xor(K_register[j], word_i[j - 61]);
-            K_register[j] = comparator;
+            if(K_register[j] == word_i[j-61])
+                K_register[j] = '0';
+            else
+                K_register[j] = '1';
         }
-
-        for (j = 0; j < 80; j++) {
-            tmp[j] = K_register[j];
-        }
+        strcpy(tmp,K_register);
     }
 }
 
@@ -93,16 +95,6 @@ void init_key(Keys *keys, char * master_key)
     key_schedule_algorithm(keys);
 }
 
-
-char xor(char A, char B)
-{
-    if(A == B)
-        return '0';
-
-    else
-        return '1';
-
-};
 
 int binary_to_decimal(char * entry_params)
 {
