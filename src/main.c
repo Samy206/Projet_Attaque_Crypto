@@ -2,6 +2,7 @@
 #include "../headers/Chiffrement/Encryption.h"
 #include "../headers/Dechiffrement/Decryption.h"
 #include "../headers/Attaque/Attack.h"
+#include "../headers/Usefull_tables.h"
 
 #include <stdlib.h>
 #include <stdio.h>

@@ -7,7 +7,7 @@
 #include <string.h>
 #include <math.h>
 
-int s_box[16] = { 12 , 5 , 6 , 11 , 9 , 0 , 10 , 13 , 3 , 14 , 15 , 8  , 4 , 7 , 1 , 2 };
+const int s_box[16] = { 12 , 5 , 6 , 11 , 9 , 0 , 10 , 13 , 3 , 14 , 15 , 8  , 4 , 7 , 1 , 2 };
 
 /* Generate a master key of 24 bits. */
 void generate_master_key(Keys * keys)

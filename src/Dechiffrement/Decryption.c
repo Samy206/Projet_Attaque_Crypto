@@ -1,12 +1,12 @@
+#include "../../headers/Usefull_tables.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <string.h>
 #include "../../headers/Dechiffrement/Decryption.h"
 #include "../../headers/Chiffrement/Encryption.h"
-#include "../../headers/Usefull_tables.h"
 
-int uns_box[16] = { 5, 14, 15, 8, 12, 1, 2, 13, 11, 4, 6, 3, 0, 7, 9, 10 };
+const int uns_box[16] = { 5, 14, 15, 8, 12, 1, 2, 13, 11, 4, 6, 3, 0, 7, 9, 10 };
 void unPermutation(char *d_Etat)
 {
 	char tmp[25];

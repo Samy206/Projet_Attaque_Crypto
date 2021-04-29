@@ -1,3 +1,4 @@
+#include "../../headers/Usefull_tables.h"
 #include "../../headers/Chiffrement/Encryption.h"
 #include "../../headers/Chiffrement/keys.h"
 #include <time.h>
@@ -5,10 +6,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "../../headers/Usefull_tables.h"
 
-int s_box[16] = { 12 , 5 , 6 , 11 , 9 , 0 , 10 , 13 , 3 , 14 , 15 , 8  , 4 , 7 , 1 , 2 };
-int p_box[22] = {6 , 12 , 18 , 1 , 7 , 13 , 19 , 2 , 8 , 14 , 20 , 3 , 9 , 15 , 21 , 4 , 10 , 16 , 22 , 5 , 11 , 17};
+
+
+const int p_box[22] = {6 , 12 , 18 , 1 , 7 , 13 , 19 , 2 , 8 , 14 , 20 , 3 , 9 , 15 , 21 , 4 , 10 , 16 , 22 , 5 , 11 , 17};
 
 void Substitution(char *Etat)
 {
