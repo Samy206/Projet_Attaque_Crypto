@@ -1,0 +1,5 @@
+#!/bin/sh
+make compile
+time ./target/main
+time gprof ./target/main gmon.out > result.txt 
+cat result.txt
