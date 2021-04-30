@@ -263,4 +263,44 @@ void calculate_possibilities(char * message, char * crypted)
 */
 }
 
+void *search_top(void *tables)
+{
+	Tables *arg = (Tables *) tables;
 
+	for(int i = 0; i < SIZE_ALL/2; i++)
+	{
+		for(int j = 0; j < SIZE_ALL/2; j++)
+		{
+			if(arg->left_array[j] == arg->right_array[i])
+			{
+				printf("\n Collision trouvée ! (haut - gauche, pos : %d ; haut - droite, pos %d)\n",j,i);
+			}
+		}
+	}
+}
+
+void *search_down(void *tables)
+{
+	Tables *arg = (Tables *) tables;
+
+	for(int i = SIZE_ALL/2; i < SIZE_ALL; i++)
+	{
+		for(int j = SIZE_ALL/2; j < SIZE_ALL; j++)
+		{
+			if(arg->left_array[j] == arg->right_array[i])
+			{
+				printf("\n Collision trouvée ! (bas - gauche, pos : %d ; bas - droite, pos %d)\n",j,i);
+			}
+		}
+	}
+}
+
+Couple_strings search_collisions(Tables *tables)
+{
+	pthread_t tids[2];
+	pthread_create(&tids[0], NULL, search_top, tables);
+	pthread_create(&tids[1], NULL, search_down, tables);
+
+	pthread_join(tids[0], NULL);
+	pthread_join(tids[1], NULL);
+}

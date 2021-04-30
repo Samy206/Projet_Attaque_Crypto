@@ -13,7 +13,7 @@ typedef struct couple_strings
 }
 Couple_strings;
 
-#define SIZE_ALL 16777216
+#define SIZE_ALL 200000//16777216
 
 double g_liste_encryption[SIZE_ALL]; //Stockage des résultats obtenus suite au chiffrement du message clair
 double g_liste_decryption[SIZE_ALL]; //Stockage des résultats obtenus suite au déchiffrement du message crypté
@@ -31,7 +31,19 @@ void * calcul_decryption_C(void * crypted);
 void * calcul_decryption_D(void * crypted);
 
 void iteration_to_key(char * entry_params, int number);
-Couple_strings search_collisions();
+
+/* Search functions */
+
+typedef struct tables
+{
+	double *left_array;
+	double *right_array;
+} Tables;
+
+Couple_strings search_collisions(Tables *tables);
+void *search_top(void *tables);
+void *search_down(void  *tables);
+
 
 double char_to_double(char *entry);
 

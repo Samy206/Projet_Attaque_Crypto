@@ -21,7 +21,11 @@ int main()
 
     double_present(keyA,keyB,message,tmp,crypted);
 
-    //calculate_possibilities(message,crypted);
+    calculate_possibilities(message,crypted);
+Tables *test = malloc(sizeof(Tables));
+test->left_array = g_liste_encryption;
+test->right_array = g_liste_decryption;
+search_collisions(test);
 
 /*    for(int i = 0; i < SIZE_ALL; i++)
     {
