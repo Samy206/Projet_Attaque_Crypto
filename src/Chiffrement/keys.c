@@ -7,7 +7,10 @@
 #include <string.h>
 #include <math.h>
 
-const int s_box[16] = { 12 , 5 , 6 , 11 , 9 , 0 , 10 , 13 , 3 , 14 , 15 , 8  , 4 , 7 , 1 , 2 };
+const char s_box[16][5] = { "1100" , "0101" , "0110" , "1011" , "1001" , "0000", "1010" , "1101" , "0011",
+                            "1110" , "1111" , "1000"  , "0100" , "0111" , "0001" , "0010"
+                            };
+
 const int offset[80] = {61 , 62 , 63 , 64 , 65 , 66, 67 , 68 , 69 , 70 , 71 , 72 , 73 , 74 ,75 , 76 , 77 , 78 , 79 ,
                         0 , 1 , 2 ,3 , 4 , 5 , 6 , 7 ,8 , 9 , 10 , 11, 12 , 13 , 14 , 15 , 16 , 17 ,18 ,19 ,20 , 21,
                         22 , 23 ,24 ,25 , 26 ,27, 28 ,29 , 30 ,31 , 32 , 33 , 34 , 35 , 36 , 37 , 38 , 39 , 40 , 41,
@@ -32,7 +35,6 @@ void key_schedule_algorithm(Keys *keys)
     memset(K_register,0,80);
     char word_i[5];
     int i,j;
-    char comparator;
     int decimal ;
     for(i = 0; i < 80 ; i++)
     {
@@ -65,11 +67,12 @@ void key_schedule_algorithm(Keys *keys)
         }
         word_i[4] = '\0';
         decimal = binary_to_decimal(word_i);
-        decimal_to_binary(s_box[decimal],word_i);
+        stpcpy(word_i,s_box[decimal]);
 
         for (j = 0; j < 4; j++) {
             K_register[j] = word_i[j];
         }
+
         decimal_to_binary(i+1, word_i);
         for (j = 61; j < 65; j++) {
             if(K_register[j] == word_i[j-61])
@@ -77,7 +80,7 @@ void key_schedule_algorithm(Keys *keys)
             else
                 K_register[j] = '1';
         }
-        strcpy(tmp,K_register);
+        stpcpy(tmp,K_register);
     }
 }
 

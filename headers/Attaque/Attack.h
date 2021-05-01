@@ -13,7 +13,7 @@ typedef struct couple_strings
 }
 Couple_strings;
 
-#define SIZE_ALL 200000//16777216
+#define SIZE_ALL 1677721 //16777216
 
 double g_liste_encryption[SIZE_ALL]; //Stockage des résultats obtenus suite au chiffrement du message clair
 double g_liste_decryption[SIZE_ALL]; //Stockage des résultats obtenus suite au déchiffrement du message crypté

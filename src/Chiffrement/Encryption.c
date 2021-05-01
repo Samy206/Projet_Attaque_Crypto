@@ -7,8 +7,6 @@
 #include <string.h>
 #include <math.h>
 
-
-
 const int p_box[22] = {6 , 12 , 18 , 1 , 7 , 13 , 19 , 2 , 8 , 14 , 20 , 3 , 9 , 15 , 21 , 4 , 10 , 16 , 22 , 5 , 11 , 17};
 
 void Substitution(char *Etat)
@@ -25,7 +23,7 @@ void Substitution(char *Etat)
         {
             word_i[j] ='\0';
             decimal = binary_to_decimal(word_i);
-            decimal_to_binary(s_box[decimal],word_i);
+            stpcpy(word_i,s_box[decimal]);
             for(k = i - 3 ; k <= i ; k++)
             {
                 Etat[k] = word_i[k%4];

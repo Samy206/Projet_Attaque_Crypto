@@ -53,7 +53,7 @@ void * calcul_encryption_A(void * message)
     char *tmp1 = malloc(sizeof(char) * 25);
     Keys *tmp2 = malloc(sizeof(Keys));
 
-    for(int i = 0 ; i < SIZE_ALL/2 ; i++)
+    for(int i = 0 ; i < SIZE_ALL ; i++)
     {
 	    iteration_to_key(tmp1,i);
         init_key(tmp2,tmp1);
@@ -132,7 +132,7 @@ void * calcul_decryption_A(void * crypted)
     char *tmp1 = malloc(sizeof(char) * 25);
     Keys *tmp2 = malloc(sizeof(Keys));
 
-    for(int i = 0 ; i < SIZE_ALL/2 ; i++)
+    for(int i = 0 ; i < SIZE_ALL ; i++)
     {
         iteration_to_key(tmp1,i);
         init_key(tmp2,tmp1);
@@ -227,19 +227,17 @@ return res;
 
 void calculate_possibilities(char * message, char * crypted)
 {
-	pthread_t threads[4];
+	pthread_t threads[2];
 	int check = 0;
 
 	check = pthread_create(&threads[0],NULL, calcul_encryption_A,message);
-	check = pthread_create(&threads[1],NULL, calcul_encryption_B,message);
-	check = pthread_create(&threads[2],NULL, calcul_decryption_A,crypted);
-	check = pthread_create(&threads[3],NULL, calcul_decryption_B,crypted);
+	//check = pthread_create(&threads[1],NULL, calcul_encryption_B,message);
+	check = pthread_create(&threads[1],NULL, calcul_decryption_A,crypted);
+	//check = pthread_create(&threads[3],NULL, calcul_decryption_B,crypted);
 
 
 	pthread_join(threads[0],NULL); 
 	pthread_join(threads[1],NULL);
-	pthread_join(threads[2],NULL);
-	pthread_join(threads[3],NULL);
 
 
 /* Partie pour les nuls
@@ -258,7 +256,6 @@ void calculate_possibilities(char * message, char * crypted)
 	g_liste_encryption[i] = char_to_double(tmp);
 	unpresent(tmp3,crypted,tmp);
 	g_liste_decryption[i] = char_to_double(tmp);
-	printf("\nPotit CPU i : %d\n",i);
     }
 */
 }
@@ -271,10 +268,11 @@ void *search_top(void *tables)
 	{
 		for(int j = 0; j < SIZE_ALL/2; j++)
 		{
-			if(arg->left_array[j] == arg->right_array[i])
-			{
-				printf("\n Collision trouvée ! (haut - gauche, pos : %d ; haut - droite, pos %d)\n",j,i);
-			}
+		    if(i != j) {
+                if (arg->left_array[j] == arg->right_array[i]) {
+                    printf("\n Collision trouvée ! (haut - gauche, pos : %d ; haut - droite, pos %d)\n", j, i);
+                }
+            }
 		}
 	}
 }
@@ -287,10 +285,11 @@ void *search_down(void *tables)
 	{
 		for(int j = SIZE_ALL/2; j < SIZE_ALL; j++)
 		{
-			if(arg->left_array[j] == arg->right_array[i])
-			{
-				printf("\n Collision trouvée ! (bas - gauche, pos : %d ; bas - droite, pos %d)\n",j,i);
-			}
+		    if( i != j) {
+                if (arg->left_array[j] == arg->right_array[i]) {
+                    printf("\n Collision trouvée ! (bas - gauche, pos : %d ; bas - droite, pos %d)\n", j, i);
+                }
+            }
 		}
 	}
 }
