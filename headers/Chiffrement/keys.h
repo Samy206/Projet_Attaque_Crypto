@@ -1,18 +1,36 @@
-#ifndef _H_KEYS
-#define _H_KEYS
+#ifndef KEYS
+#define KEYS
 
-typedef struct Keys
+typedef struct
 {
-    char g_master_key[25];
-    char g_sub_keys[11][25];
-}
-Keys;
+    unsigned int x:24;
+}uint24;
 
-void generate_master_key(Keys *keys);
-void key_schedule_algorithm(Keys *keys);
-void init_key(Keys *keys,char * master_key);
+typedef struct
+{
+    unsigned int x:4;
+}uint4;
 
-int binary_to_decimal(char *entry_params);
-void decimal_to_binary(int number,char *entry_params);
+typedef struct
+{
+    unsigned int x:4;
+}uint5;
+
+typedef struct
+{
+    unsigned long int x:64;
+}uint64;
+
+
+typedef struct
+{
+    uint24 master_key;
+    uint24 sub_keys[11];
+}Key;
+
+
+void init_key(Key * key, uint24 value);
+void key_schedule(Key * key);
+
 
 #endif

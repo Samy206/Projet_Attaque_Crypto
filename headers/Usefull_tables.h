@@ -1,9 +1,8 @@
-#ifndef _H_TABLES
-#define _H_TABLES
+#inlcude "Chiffrement/keys.h"
 
-extern const char s_box[16][5] ;
-extern const int p_box[22] ;
-extern const char uns_box[16][5] ;
-extern const int offset[80];
+#ifndef TABLES
+#define TABLES
 
-#endif
+extern const uint4 s_box[16];
+
+#endif TABLES
