@@ -1,10 +1,11 @@
 #include "../../headers/Chiffrement/keys.h"
 #include <stdio.h>
-//#include "../../headers/Chiffrement/Encryption.h"
+#include "../../headers/Usefull_tables.h"
 
 const uint4 s_box[16] = { {12} , {5} , {6} , {11} , {9} , {0} ,
-                          {10} , {13} , {3} , {14} , {15}, {8} , {4}
-                          , {7} , {1} , {2}  };
+                          {10} , {13} , {3} , {14} , {15}, {8} , {4},
+                          {7} , {1} , {2}
+                        };
 
 void init_key(Key * key, uint24 value)
 {
@@ -12,36 +13,37 @@ void init_key(Key * key, uint24 value)
     key_schedule(key);
 }
 
+
 void key_schedule(Key * key)
 {
-    uint64 k_register;
-    uint64 k_register_tmp;
-    k_register.x = key->master_key.x;
-    k_register_tmp.x = key->master_key.x;
-    uint4  entry_sbox;
+    uint80 k_register;
+    u_int64_t k_x,k_y;
+
+    uint4 entry_sbox;
     uint5 xored;
-    for(int i = 0 ; i < 11 ; i++)
+
+    k_register.x = key->master_key.x;
+    k_register.x <<= 40;
+    k_register.y = 0;
+
+    key->sub_keys[0].x = k_register.x;
+
+    for(int i = 1 ; i < 11 ; i++)
     {
-        printf("k_register begin %d : %lx, %ld\n",i,k_register.x,k_register.x);
-        key->sub_keys[i].x = 0;
-        key->sub_keys[i].x |= (k_register.x << 23);     //Etape récup sous clé
+        k_x = k_register.x;
+        k_y = k_register.y;
 
-        k_register.x >>= 61;                             //Etape décalage 61
+        k_register.x = (k_register.x << 61) | (k_y << 45) | (k_x >> 19);
+        k_register.y = ((k_x >> 3) & 0xFFFF);
 
-        entry_sbox.x = 0;
-        entry_sbox.x |= (k_register.x << 60);
-        entry_sbox.x = s_box[entry_sbox.x].x;
-        k_register.x = 0;
-        k_register.x = entry_sbox.x;
-        k_register.x >>=  60;
-        k_register.x = k_register.x | k_register_tmp.x;                  //Etape s_box[79-76]
-        printf("k_register after sbox %d : %lx\n",i,k_register.x);
+        entry_sbox.x = s_box[k_register.x >> 60].x;
+        k_register.x &= 0x0FFFFFFFFFFFFFF;
+        k_register.x |= ((u_int64_t) (entry_sbox.x) << 60);
 
         xored.x = i;
+        k_register.y ^= (xored.x << 15);
+        k_register.x ^= (xored.x >> 1);
 
-        k_register.x >>= 50;
-        k_register.x ^= xored.x;
-        k_register.x <<= 50;
-        printf("k_register end %d : %lx\n\n",i,k_register.x);
+        key->sub_keys[i].x = k_register.x;
     }
 }

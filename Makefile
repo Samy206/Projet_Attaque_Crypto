@@ -11,13 +11,13 @@ run: compile
 	@./$(T)main
 
 compile: $(S)main.c $(T)keys.o $(H)$(C)keys.h $(H)$(C)Encryption.h $(T)Encryption.o $(H)Usefull_tables.h
-	@gcc -Wall -Wextra -g  -I$(H) $(S)main.c $(T)keys.o $(T)Encryption.o -o $(T)main -pthread -lm
+	@gcc -Wall -Wextra -g  -I$(H) $(S)main.c $(T)keys.o $(T)Encryption.o -o $(T)main -pthread
 
 $(T)keys.o : $(H)$(C)keys.h $(H)$(C)Encryption.h $(T)Encryption.o $(H)Usefull_tables.h
-	@gcc -Wall -Wextra -g -I$(H) $(S)$(C)keys.c -o $(T)keys.o -c -lm -pthread
+	@gcc -Wall -Wextra -g -I$(H) $(S)$(C)keys.c -o $(T)keys.o -c  -pthread
 
 $(T)Encryption.o : $(H)$(C)Encryption.h  $(H)$(C)keys.h $(H)Usefull_tables.h
-	@gcc -Wall -Wextra -g -I$(H) $(S)$(C)Encryption.c -o $(T)Encryption.o -c -lm -pthread
+	@gcc -Wall -Wextra -g -I$(H) $(S)$(C)Encryption.c -o $(T)Encryption.o -c -pthread
 
 clean:
 	@rm $(T)*.o

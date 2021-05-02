@@ -13,13 +13,14 @@ typedef struct
 
 typedef struct
 {
-    unsigned int x:4;
+    unsigned int x:5;
 }uint5;
 
 typedef struct
 {
     unsigned long int x:64;
-}uint64;
+    unsigned long int y:16;
+}uint80;
 
 
 typedef struct
