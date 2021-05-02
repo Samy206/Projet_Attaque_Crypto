@@ -1,7 +1,7 @@
 #ifndef KEYS
 #define KEYS
 
-typedef struct
+typedef struct uint24
 {
     unsigned int x:24;
 }uint24;
@@ -16,10 +16,10 @@ typedef struct
     unsigned int x:5;
 }uint5;
 
-typedef struct
+typedef struct uint80
 {
     unsigned long int x:64;
-    unsigned long int y:16;
+    unsigned short int y:16;
 }uint80;
 
 

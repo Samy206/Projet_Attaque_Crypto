@@ -17,14 +17,14 @@ void init_key(Key * key, uint24 value)
 void key_schedule(Key * key)
 {
     uint80 k_register;
-    u_int64_t k_x,k_y;
-
-    uint4 entry_sbox;
-    uint5 xored;
-
     k_register.x = key->master_key.x;
     k_register.x <<= 40;
     k_register.y = 0;
+
+    u_int64_t k_x,k_y;
+
+    uint4 entry_sbox;
+    uint24 xored;
 
     key->sub_keys[0].x = k_register.x;
 

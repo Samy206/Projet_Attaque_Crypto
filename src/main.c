@@ -6,17 +6,11 @@
 
 int main()
 {
-    Key * keyA = malloc(sizeof(Key));
-    uint24 zero;
-    zero.x = 0;
-    //substitution(&zero);
-    //printf("new zero : %x\n",zero.x);
-    //permutation(&zero);
-    init_key(keyA,zero);
-    uint24 res;
-    res.x = present(keyA,zero).x;
-    printf("new zero : %x\n",res.x);
 
+    uint24 message, cle;
+    message.x = 0xFFF000;
+    permutation(&message);
+    printf("zero : %x\n",message.x);
 
 
 }
