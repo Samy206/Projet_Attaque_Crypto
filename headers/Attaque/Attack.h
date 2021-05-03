@@ -21,10 +21,17 @@ uint24 g_liste_decryption[SIZE];
 Key keys[SIZE];
 
 void calculate_possibities(uint24 message,uint24 crypted);
-void * calculate_enc(void * message);
-void * calculate_dec(void * crypted);
+void * calculate_encA(void * message);
+void * calculate_decA(void * crypted);
+void * calculate_encB(void * message);
+void * calculate_decB(void * crypted);
+
 int search_collisions();
-void * search_high(void * nothing);
-void * search_low(void * nothing);
+void * search_highA(void * nothing);
+void * search_lowB(void * nothing);
+void * search_highB(void * nothing);
+void * search_lowA(void * nothing);
+
+void check_couples(uint24 message2, uint24 crypted2);
 
 #endif

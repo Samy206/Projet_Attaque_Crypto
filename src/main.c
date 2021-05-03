@@ -16,5 +16,5 @@ int main()
     int nb;
     calculate_possibities(messageA,cryptedA);
     nb = search_collisions();
-    printf("g_cmp_couples_keys : %d\n",nb);
+    check_couples(messageB,cryptedB);
 }

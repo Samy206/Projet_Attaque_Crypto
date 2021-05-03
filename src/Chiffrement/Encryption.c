@@ -68,6 +68,8 @@ uint24 present(Key * key, uint24 message)
 
 uint24 two_present(Key * keyA, Key * keyB, uint24 message)
 {
-    uint24 tmp = present(keyA,message);
-    return(present(keyB,tmp));
+    uint24 tmp;
+    tmp.x = present(keyA,message).x;
+    tmp.x = present(keyB,tmp).x;
+    return tmp;
 }

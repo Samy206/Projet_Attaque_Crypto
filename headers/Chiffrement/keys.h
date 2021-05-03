@@ -1,6 +1,8 @@
 #ifndef KEYS
 #define KEYS
 
+#include <stdint.h>
+
 typedef struct uint24
 {
     unsigned int x:24;

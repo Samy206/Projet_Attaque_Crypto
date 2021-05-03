@@ -21,7 +21,7 @@ void key_schedule(Key * key)
     k_register.x <<= 40;
     k_register.y = 0;
 
-    u_int64_t k_x,k_y;
+    uint64_t k_x,k_y;
 
     uint4 entry_sbox;
     uint24 xored;
@@ -38,7 +38,7 @@ void key_schedule(Key * key)
         k_y = k_register.y;
         entry_sbox.x = s_box[k_register.x >> 60].x;
         k_register.x &= 0x0FFFFFFFFFFFFFF;
-        k_register.x |= ((u_int64_t) (entry_sbox.x) << 60);
+        k_register.x |= ((uint64_t) (entry_sbox.x) << 60);
 
         xored.x = i;
         k_register.y ^= ((i & 0x01) << 15) ;
