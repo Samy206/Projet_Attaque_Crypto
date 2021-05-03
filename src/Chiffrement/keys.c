@@ -35,14 +35,14 @@ void key_schedule(Key * key)
 
         k_register.x = (k_register.x << 61) | (k_y << 45) | (k_x >> 19);
         k_register.y = ((k_x >> 3) & 0xFFFF);
-
+        k_y = k_register.y;
         entry_sbox.x = s_box[k_register.x >> 60].x;
         k_register.x &= 0x0FFFFFFFFFFFFFF;
         k_register.x |= ((u_int64_t) (entry_sbox.x) << 60);
 
         xored.x = i;
-        k_register.y ^= (xored.x << 15);
-        k_register.x ^= (xored.x >> 1);
+        k_register.y ^= ((i & 0x01) << 15) ;
+        k_register.x ^= (i >> 1);
 
         key->sub_keys[i].x = k_register.x;
     }

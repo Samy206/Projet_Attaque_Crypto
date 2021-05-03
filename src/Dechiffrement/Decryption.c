@@ -1,13 +1,15 @@
+#include "../../headers/Dechiffrement/Decryption.h"
 #include "../../headers/Chiffrement/Encryption.h"
-#include "../../headers/Usefull_tables.h"
 #include "../../headers/Chiffrement/keys.h"
-#include <stdlib.h>
+#include "../../headers/Usefull_tables.h"
 #include <stdio.h>
+#include <stdlib.h>
 
-const int p_box[24] = { 0 , 6 , 12 , 18 , 1 , 7 , 13 , 19 , 2 , 8 , 14 , 20 , 3, 9 , 15 , 21 , 4 , 10 , 16 , 22 ,
-                        5 ,11 , 17 , 23 };
 
-void permutation(uint24 * state)
+const uint4 un_s_box[16] = {{5}, {14}, {15}, {8}, {12}, {1}, {2}, {13}, {11},{4},
+                            {6}, {3}, {0},{7}, {9}, {10}};
+
+void un_permutation(uint24 * state)
 {
     uint24 tmp;
     tmp.x = 0;
@@ -16,15 +18,15 @@ void permutation(uint24 * state)
 
     for (i=0; i<24; i++)
     {
-        offset = 23 - i;
-        tmp.x |=  ( (state->x >> offset & 0x1) << (23 - p_box[i]) );
+        offset = 23 - p_box[i] ;
+        tmp.x |=  ( (state->x >> offset & 0x1) << (23 - i) );
     }
 
     state->x &= 0x0;
     state->x |= tmp.x;
 }
 
-void substitution(uint24 * state)
+void un_substitution(uint24 * state)
 {
     uint4 entry_sbox;
     uint24 tmp ;
@@ -39,7 +41,7 @@ void substitution(uint24 * state)
         shift = 24 - offset;
 
         entry_sbox.x |= (state->x >> shift & 0x00000F);
-        entry_sbox.x = s_box[entry_sbox.x].x;
+        entry_sbox.x = un_s_box[entry_sbox.x].x;
         tmp.x <<= 4 ;
         tmp.x |= entry_sbox.x;
 
@@ -50,24 +52,19 @@ void substitution(uint24 * state)
     state->x = tmp.x ;
 }
 
-uint24 present(Key * key, uint24 message)
+uint24 un_present(Key * key, uint24 message)
 {
     uint24 state;
     state.x = message.x;
 
-    for(int i = 0 ; i < 10 ; i++)
+    state.x ^= key->sub_keys[10].x;
+
+    for(int i = 9 ; i >= 0 ; i--)
     {
+        un_permutation(&state);
+        un_substitution(&state);
         state.x ^= key->sub_keys[i].x;
-        substitution(&state);
-        permutation(&state);
     }
 
-    state.x ^= key->sub_keys[10].x;
     return state;
-}
-
-uint24 two_present(Key * keyA, Key * keyB, uint24 message)
-{
-    uint24 tmp = present(keyA,message);
-    return(present(keyB,tmp));
 }
