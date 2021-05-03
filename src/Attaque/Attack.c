@@ -5,9 +5,24 @@
 
 int g_cmp_couples_keys =  0;
 
-int comparator_g_list(const void * p1, const void * p2)
+int comparator_g_list(const void *p1, const void *p2)
 {
-  return ((int)p1 - (int)p2);
+	uint24 *arg1 = (uint24 *) p1;
+	uint24 *arg2 = (uint24 *) p2;
+
+	if(arg1->x < arg2->x)
+	{
+		return -1;
+	}
+
+	if(arg1->x == arg2->x)
+	{
+		return 0;
+	}
+	if(arg1->x > arg2->x)
+	{
+		return 1;
+	}
 }
 
 void calculate_possibities(uint24 message,uint24 crypted)
@@ -26,10 +41,11 @@ void calculate_possibities(uint24 message,uint24 crypted)
     pthread_join(threads[2],NULL);
     pthread_join(threads[3],NULL);
 
-    qsort(g_liste_encryption, SIZE, sizeof(uint24), comparator_g_list);
-    qsort(g_liste_decryption, SIZE, sizeof(uint24), comparator_g_list);
+	qsort(g_liste_encryption, SIZE, sizeof(uint24), comparator_g_list);
+    
+	qsort(g_liste_decryption, SIZE, sizeof(uint24), comparator_g_list);
 
-    printf("\n\n --------SEARCHING COLISIONS----------- \n\n");
+    printf("\n\n --------SEARCHING COLLISIONS----------- \n\n");
 
 }
 
@@ -118,7 +134,7 @@ void * search_highA(void * nothing)
 	    }
             if(g_liste_encryption[i].x == g_liste_decryption[j].x)
             {
-		    printf("\n\n \t Cooooollision : %d, %d \n",i,j);
+		    //printf("\n\n \t Collision : %d, %d \n",i,j);
                 couples[g_cmp_couples_keys].indexA = i;
                 couples[g_cmp_couples_keys].indexB = j;
                 g_cmp_couples_keys++;
