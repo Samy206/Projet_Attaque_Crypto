@@ -7,46 +7,44 @@ int g_cmp_couples_keys =  0;
 
 int comparator_g_list(const void *p1, const void *p2)
 {
-	uint24 *arg1 = (uint24 *) p1;
-	uint24 *arg2 = (uint24 *) p2;
+	const uint24 arg1 = *(const uint24 *) p1;
+	const uint24 arg2 = *(const uint24 *) p2;
 
-	if(arg1->x < arg2->x)
+	if(arg1.x < arg2.x)
 	{
 		return -1;
 	}
-
-	if(arg1->x == arg2->x)
-	{
-		return 0;
-	}
-	if(arg1->x > arg2->x)
+	else if(arg1.x > arg2.x)
 	{
 		return 1;
 	}
+	else
+	{
+		return 0;
+	}
+
 }
 
 void calculate_possibities(uint24 message,uint24 crypted)
 {
-    pthread_t threads[4];
-    int check;
+	pthread_t threads[4];
+	int check;
 
-    check = pthread_create(&threads[0],NULL, calculate_encA,&message);
-    check = pthread_create(&threads[1],NULL, calculate_decA,&crypted);
-    check = pthread_create(&threads[2],NULL, calculate_encB,&message);
-    check = pthread_create(&threads[3],NULL, calculate_decB,&crypted);
+	check = pthread_create(&threads[0],NULL, calculate_encA,&message);
+	check = pthread_create(&threads[1],NULL, calculate_decA,&crypted);
+	check = pthread_create(&threads[2],NULL, calculate_encB,&message);
+	check = pthread_create(&threads[3],NULL, calculate_decB,&crypted);
 
 
-    pthread_join(threads[0],NULL);
-    pthread_join(threads[1],NULL);
-    pthread_join(threads[2],NULL);
-    pthread_join(threads[3],NULL);
+	pthread_join(threads[0],NULL);
+	pthread_join(threads[1],NULL);
+	pthread_join(threads[2],NULL);
+	pthread_join(threads[3],NULL);
 
 	qsort(g_liste_encryption, SIZE, sizeof(uint24), comparator_g_list);
-    
 	qsort(g_liste_decryption, SIZE, sizeof(uint24), comparator_g_list);
 
-    printf("\n\n --------SEARCHING COLLISIONS----------- \n\n");
-
+	printf("\n\n --------SEARCHING COLLISIONS----------- \n\n");
 }
 
 void * calculate_encA(void * message)
@@ -103,23 +101,23 @@ void * calculate_decB(void * crypted)
     }
 }
 
-
 int search_collisions()
 {
-    pthread_t threads[4];
-    int check;
+	pthread_t threads[4];
+	int check;
 
-    check = pthread_create(&threads[0],NULL, search_highA,NULL);
-    check = pthread_create(&threads[1],NULL, search_lowA,NULL);
-    check = pthread_create(&threads[2],NULL, search_highB,NULL);
-    check = pthread_create(&threads[3],NULL, search_lowB,NULL);
+	check = pthread_create(&threads[0],NULL, search_highA,NULL);
+	check = pthread_create(&threads[1],NULL, search_lowA,NULL);
+	check = pthread_create(&threads[2],NULL, search_highB,NULL);
+	check = pthread_create(&threads[3],NULL, search_lowB,NULL);
 
 
-    pthread_join(threads[0],NULL);
-    pthread_join(threads[1],NULL);
-    pthread_join(threads[2],NULL);
-    pthread_join(threads[3],NULL);
-    return g_cmp_couples_keys;
+	pthread_join(threads[0],NULL);
+	pthread_join(threads[1],NULL);
+	pthread_join(threads[2],NULL);
+	pthread_join(threads[3],NULL);
+
+	return g_cmp_couples_keys;
 }
 
 void * search_highA(void * nothing)

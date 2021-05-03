@@ -16,5 +16,6 @@ int main()
     int nb;
     calculate_possibities(messageA,cryptedA);
     nb = search_collisions();
+    printf("\n Check couples démarre \n");
     check_couples(messageB,cryptedB);
 }
