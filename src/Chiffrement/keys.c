@@ -56,27 +56,36 @@ void key_schedule_algorithm(Keys *keys)
         }
         keys->g_sub_keys[i][24] = '\0';
 
+	printf("K_register before offset : %s\n",K_register);
         for (j = 0; j < 80; j++) {
             K_register[j] = tmp[offset[j]];
         }
+	printf("K_register  after offset : %s\n",K_register);
+
 
         for (j = 0; j < 4; j++) {
             word_i[j] = K_register[j];
         }
         word_i[4] = '\0';
         decimal = binary_to_decimal(word_i);
+	printf("K_register  before s_box : %s \n",K_register);
         decimal_to_binary(s_box[decimal],word_i);
 
         for (j = 0; j < 4; j++) {
             K_register[j] = word_i[j];
         }
+
+	printf("K_register   after s_box : %s \n",K_register);
         decimal_to_binary(i+1, word_i);
+	printf("K_register  before xored : %s\n",K_register);
         for (j = 61; j < 65; j++) {
             if(K_register[j] == word_i[j-61])
                 K_register[j] = '0';
             else
                 K_register[j] = '1';
         }
+	printf("K_register   after xored : %s\n\n",K_register);
+
         strcpy(tmp,K_register);
     }
 }
