@@ -22,7 +22,6 @@ int comparator_g_list(const void *p1, const void *p2)
 	{
 		return 0;
 	}
-
 }
 
 void calculate_possibities(uint24 message,uint24 crypted)
@@ -98,44 +97,47 @@ void calculate_possibilities_dual_core(uint24 message,uint24 crypted)
 
 void *search_high_d(void *nothing)
 {
-	for(int i = 0; i < SIZE/2; i++)
-	{
-		for(int j = 0; j < SIZE; j++)
-		{
-			if(g_liste_encryption[i].x < g_liste_decryption[j].x)
-			{
-				break;
-			}
+	int i,j;
+	i = 0;
+	j = 0;
+    while (i < SIZE/2 && j < SIZE)
+    {
+        if (g_liste_encryption[i].x < g_liste_decryption[j].x)
+            i++;
 
-			if(g_liste_encryption[i].x == g_liste_decryption[j].x)
-			{
-				couples[g_cmp_couples_keys].indexA = i;
-				couples[g_cmp_couples_keys].indexB = j;
-				g_cmp_couples_keys++;
-			}
-		}
-	}
+        else if (g_liste_encryption[i].x > g_liste_decryption[j].x)
+            j++;
+
+        else
+        {
+            couples[g_cmp_couples_keys].indexA = i;
+            couples[g_cmp_couples_keys].indexB = j;
+            g_cmp_couples_keys++;
+        }
+    }
 }
 
 void *search_low_d(void *nothing)
 {
-	for(int i = SIZE/2; i < SIZE; i++)
-	{
-		for(int j = 0; j < SIZE; j++)
-		{
-			if(g_liste_encryption[i].x < g_liste_decryption[j].x)
-			{
-				break;
-			}
+    int i,j;
+    i = SIZE/2;
+    j = 0;
 
-			if(g_liste_encryption[i].x == g_liste_decryption[j].x)
-			{
-				couples[g_cmp_couples_keys].indexA = i;
-				couples[g_cmp_couples_keys].indexB = j;
-				g_cmp_couples_keys++;
-			}
-		}
-	}
+    while (i < SIZE && j < SIZE)
+    {
+        if (g_liste_encryption[i].x < g_liste_decryption[j].x)
+            i++;
+
+        else if (g_liste_encryption[i].x > g_liste_decryption[j].x)
+            j++;
+
+        else
+        {
+            couples[g_cmp_couples_keys].indexA = i;
+            couples[g_cmp_couples_keys].indexB = j;
+            g_cmp_couples_keys++;
+        }
+    }
 }
 
 int search_collisions_dual_core()
@@ -248,85 +250,90 @@ void calculate_possibilities_quad_core(uint24 message,uint24 crypted)
 
 void *search_high_q_A(void *nothing)
 {
-	for(int i = 0; i < SIZE/4; i++)
-	{
-		for(int j = 0; j < SIZE; j++)
-		{
-	    		if(g_liste_encryption[i].x < g_liste_decryption[j].x)
-	    		{
-		    		break;
-	    		}
-	    		if(g_liste_encryption[i].x == g_liste_decryption[j].x)
-	    		{
-				couples[g_cmp_couples_keys].indexA = i;
-			couples[g_cmp_couples_keys].indexB = j;
-			g_cmp_couples_keys++;
-			}
-		}
-	}
+    int i,j;
+    i = 0;
+    j = 0;
+    while (i < SIZE/4 && j < SIZE)
+    {
+        if (g_liste_encryption[i].x < g_liste_decryption[j].x)
+            i++;
+
+        else if (g_liste_encryption[i].x > g_liste_decryption[j].x)
+            j++;
+
+        else
+        {
+            couples[g_cmp_couples_keys].indexA = i;
+            couples[g_cmp_couples_keys].indexB = j;
+            g_cmp_couples_keys++;
+        }
+    }
 }
 
 void *search_high_q_B(void *nothing)
 {
-	for(int i = SIZE/4; i < SIZE/2; i++)
-	{
-		for(int j = 0; j < SIZE; j++)
-		{
-			if(g_liste_encryption[i].x < g_liste_decryption[j].x)
-			{
-			    break;
-			}
+    int i,j;
+    i = SIZE/4;
+    j = 0;
+    while ( (i < SIZE/2)  && j < SIZE)
+    {
+        if (g_liste_encryption[i].x < g_liste_decryption[j].x)
+            i++;
 
-	   		if(g_liste_encryption[i].x == g_liste_decryption[j].x)
-			{
-			couples[g_cmp_couples_keys].indexA = i;
-			couples[g_cmp_couples_keys].indexB = j;
-			g_cmp_couples_keys++;
-	    		}
-		}
-	}
+        else if (g_liste_encryption[i].x > g_liste_decryption[j].x)
+            j++;
+
+        else
+        {
+            couples[g_cmp_couples_keys].indexA = i;
+            couples[g_cmp_couples_keys].indexB = j;
+            g_cmp_couples_keys++;
+        }
+    }
 }
 
 void *search_low_q_A(void *nothing)
 {
-	for(int i = SIZE/2; i < (3*SIZE)/4; i++)
-	{
-		for(int j = 0; j < SIZE; j++)
-		{
-			if(g_liste_encryption[i].x < g_liste_decryption[j].x)
-			{
-			    break;
-			}
+    int i,j;
+    i = SIZE/2;
+    j = 0;
+    while ( (i < 3*SIZE/4)  && j < SIZE)
+    {
+        if (g_liste_encryption[i].x < g_liste_decryption[j].x)
+            i++;
 
-			if(g_liste_encryption[i].x == g_liste_decryption[j].x)
-			{
-				couples[g_cmp_couples_keys].indexA = i;
-				couples[g_cmp_couples_keys].indexB = j;
-				g_cmp_couples_keys++;
-			}
-		}
-	}
+        else if (g_liste_encryption[i].x > g_liste_decryption[j].x)
+            j++;
+
+        else
+        {
+            couples[g_cmp_couples_keys].indexA = i;
+            couples[g_cmp_couples_keys].indexB = j;
+            g_cmp_couples_keys++;
+        }
+    }
 }
 
 void *search_low_q_B(void *nothing)
 {
-	for(int i = (3*SIZE)/4; i < SIZE; i++)
-	{
-		for(int j = 0; j < SIZE; j++)
-		{
-			if(g_liste_encryption[i].x < g_liste_decryption[j].x)
-			{
-				break;
-			}
+    int i,j;
+    i = 3*SIZE/4;
+    j = 0;
+    while ( i < SIZE  && j < SIZE)
+    {
+        if (g_liste_encryption[i].x < g_liste_decryption[j].x)
+            i++;
 
-			if(g_liste_encryption[i].x == g_liste_decryption[j].x)
-			{
-				couples[g_cmp_couples_keys].indexA = i;
-				couples[g_cmp_couples_keys].indexB = j;
-				g_cmp_couples_keys++;
-			}
-		}
-	}
+        else if (g_liste_encryption[i].x > g_liste_decryption[j].x)
+            j++;
+
+        else
+        {
+            couples[g_cmp_couples_keys].indexA = i;
+            couples[g_cmp_couples_keys].indexB = j;
+            g_cmp_couples_keys++;
+        }
+    }
 }
 
 int search_collisions_quad_core()

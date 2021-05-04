@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/sysinfo.h>
-
 #include "../headers/Chiffrement/keys.h"
 #include "../headers/Chiffrement/Encryption.h"
 #include "../headers/Dechiffrement/Decryption.h"
 #include "../headers/Attaque/Attack.h"
+#include "Attaque/Count_cores.c"
 
 int main()
 {
@@ -16,7 +15,7 @@ int main()
     cryptedB.x = 0x1CF0CC;
     int nb;
 
-    int number_configured_procs = get_nprocs();
+    int number_configured_procs = 2;//getNumberOfCores();
 
     switch(number_configured_procs)
     {
