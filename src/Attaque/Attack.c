@@ -47,6 +47,321 @@ void calculate_possibities(uint24 message,uint24 crypted)
 	printf("\n\n --------SEARCHING COLLISIONS----------- \n\n");
 }
 
+/* Dual core */
+void *calculate_enc_d(void *message)
+{
+	uint24 *entry = (uint24 *) (message);
+	uint24 tmp;
+
+	for(int i = 0; i < SIZE; i++)
+	{
+	    tmp.x = i;
+	    init_key(&keys[i],tmp);
+	    g_liste_encryption[i].x = present(&keys[i],*entry).x;
+	}
+}
+
+void *calculate_dec_d(void *crypted)
+{
+	uint24 *entry = (uint24 *) (crypted);
+	uint24 tmp;
+
+	for(int i = 0; i < SIZE; i++)
+	{
+		tmp.x = i;
+		init_key(&keys[i],tmp);
+		g_liste_decryption[i].x = un_present(&keys[i],*entry).x;
+	}
+}
+
+void calculate_possibilities_dual_core(uint24 message,uint24 crypted)
+{
+	pthread_t threads[2];
+	int check;
+
+	check = pthread_create(&threads[0],NULL, calculate_enc_d,&message);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	check = pthread_create(&threads[1],NULL, calculate_dec_d,&crypted);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	check = pthread_join(threads[0],NULL);
+		if(check != 0){exit(EXIT_FAILURE);}
+	check = pthread_join(threads[1],NULL);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	qsort(g_liste_encryption, SIZE, sizeof(uint24), comparator_g_list);
+	qsort(g_liste_decryption, SIZE, sizeof(uint24), comparator_g_list);
+
+	printf("\n\n --------SEARCHING COLLISIONS----------- \n\n");
+}
+
+void *search_high_d(void *nothing)
+{
+	for(int i = 0; i < SIZE/2; i++)
+	{
+		for(int j = 0; j < SIZE; j++)
+		{
+			if(g_liste_encryption[i].x < g_liste_decryption[j].x)
+			{
+				break;
+			}
+
+			if(g_liste_encryption[i].x == g_liste_decryption[j].x)
+			{
+				couples[g_cmp_couples_keys].indexA = i;
+				couples[g_cmp_couples_keys].indexB = j;
+				g_cmp_couples_keys++;
+			}
+		}
+	}
+}
+
+void *search_low_d(void *nothing)
+{
+	for(int i = SIZE/2; i < SIZE; i++)
+	{
+		for(int j = 0; j < SIZE; j++)
+		{
+			if(g_liste_encryption[i].x < g_liste_decryption[j].x)
+			{
+				break;
+			}
+
+			if(g_liste_encryption[i].x == g_liste_decryption[j].x)
+			{
+				couples[g_cmp_couples_keys].indexA = i;
+				couples[g_cmp_couples_keys].indexB = j;
+				g_cmp_couples_keys++;
+			}
+		}
+	}
+}
+
+int search_collisions_dual_core()
+{
+	pthread_t threads[2];
+	int check;
+
+	check = pthread_create(&threads[0], NULL, search_high_d, NULL);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	check = pthread_create(&threads[1], NULL, search_low_d, NULL);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	check = pthread_join(threads[0],NULL);
+		if(check != 0){exit(EXIT_FAILURE);}
+	check = pthread_join(threads[1],NULL);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	return g_cmp_couples_keys;
+}
+/* Dual core */
+
+/* Quad core */
+void *calculate_enc_q_A(void *message)
+{
+	uint24 *entry = (uint24 *) (message);
+	uint24 tmp;
+
+	for(int i = 0; i < SIZE/2; i++)
+	{
+	    tmp.x = i;
+	    init_key(&keys[i],tmp);
+	    g_liste_encryption[i].x = present(&keys[i],*entry).x;
+	}
+}
+
+void *calculate_dec_q_A(void *crypted)
+{
+	uint24 *entry = (uint24 *) (crypted);
+	uint24 tmp;
+
+	for(int i = 0; i < SIZE/2; i++)
+	{
+		tmp.x = i;
+		init_key(&keys[i],tmp);
+		g_liste_decryption[i].x = un_present(&keys[i],*entry).x;
+	}
+}
+
+void *calculate_enc_q_B(void *message)
+{
+	uint24 *entry = (uint24 *) (message);
+	uint24 tmp;
+
+	for(int i = SIZE/2; i < SIZE; i++)
+	{
+	    tmp.x = i;
+	    init_key(&keys[i],tmp);
+	    g_liste_encryption[i].x = present(&keys[i],*entry).x;
+	}
+}
+
+void *calculate_dec_q_B(void *crypted)
+{
+	uint24 *entry = (uint24 *) (crypted);
+	uint24 tmp;
+
+	for(int i = SIZE/2; i < SIZE; i++)
+	{
+		tmp.x = i;
+		init_key(&keys[i],tmp);
+		g_liste_decryption[i].x = un_present(&keys[i],*entry).x;
+	}
+}
+
+void calculate_possibilities_quad_core(uint24 message,uint24 crypted)
+{
+	pthread_t threads[4];
+	int check;
+
+	check = pthread_create(&threads[0],NULL, calculate_enc_q_A,&message);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	check = pthread_create(&threads[1],NULL, calculate_dec_q_A,&crypted);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	check = pthread_create(&threads[2],NULL, calculate_enc_q_B,&message);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	check = pthread_create(&threads[3],NULL, calculate_dec_q_B,&crypted);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	check = pthread_join(threads[0],NULL);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	check = pthread_join(threads[1],NULL);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	check = pthread_join(threads[2],NULL);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	check = pthread_join(threads[3],NULL);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	qsort(g_liste_encryption, SIZE, sizeof(uint24), comparator_g_list);
+	qsort(g_liste_decryption, SIZE, sizeof(uint24), comparator_g_list);
+
+	printf("\n\n --------SEARCHING COLLISIONS----------- \n\n");
+}
+
+void *search_high_q_A(void *nothing)
+{
+	for(int i = 0; i < SIZE/4; i++)
+	{
+		for(int j = 0; j < SIZE; j++)
+		{
+	    		if(g_liste_encryption[i].x < g_liste_decryption[j].x)
+	    		{
+		    		break;
+	    		}
+	    		if(g_liste_encryption[i].x == g_liste_decryption[j].x)
+	    		{
+				couples[g_cmp_couples_keys].indexA = i;
+			couples[g_cmp_couples_keys].indexB = j;
+			g_cmp_couples_keys++;
+			}
+		}
+	}
+}
+
+void *search_high_q_B(void *nothing)
+{
+	for(int i = SIZE/4; i < SIZE/2; i++)
+	{
+		for(int j = 0; j < SIZE; j++)
+		{
+			if(g_liste_encryption[i].x < g_liste_decryption[j].x)
+			{
+			    break;
+			}
+
+	   		if(g_liste_encryption[i].x == g_liste_decryption[j].x)
+			{
+			couples[g_cmp_couples_keys].indexA = i;
+			couples[g_cmp_couples_keys].indexB = j;
+			g_cmp_couples_keys++;
+	    		}
+		}
+	}
+}
+
+void *search_low_q_A(void *nothing)
+{
+	for(int i = SIZE/2; i < (3*SIZE)/4; i++)
+	{
+		for(int j = 0; j < SIZE; j++)
+		{
+			if(g_liste_encryption[i].x < g_liste_decryption[j].x)
+			{
+			    break;
+			}
+
+			if(g_liste_encryption[i].x == g_liste_decryption[j].x)
+			{
+				couples[g_cmp_couples_keys].indexA = i;
+				couples[g_cmp_couples_keys].indexB = j;
+				g_cmp_couples_keys++;
+			}
+		}
+	}
+}
+
+void *search_low_q_B(void *nothing)
+{
+	for(int i = (3*SIZE)/4; i < SIZE; i++)
+	{
+		for(int j = 0; j < SIZE; j++)
+		{
+			if(g_liste_encryption[i].x < g_liste_decryption[j].x)
+			{
+				break;
+			}
+
+			if(g_liste_encryption[i].x == g_liste_decryption[j].x)
+			{
+				couples[g_cmp_couples_keys].indexA = i;
+				couples[g_cmp_couples_keys].indexB = j;
+				g_cmp_couples_keys++;
+			}
+		}
+	}
+}
+
+int search_collisions_quad_core()
+{
+	pthread_t threads[4];
+	int check;
+
+	check = pthread_create(&threads[0], NULL, search_high_q_A, NULL);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	check = pthread_create(&threads[1], NULL, search_low_q_A, NULL);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	check = pthread_create(&threads[2], NULL, search_high_q_B, NULL);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	check = pthread_create(&threads[3], NULL, search_low_q_B, NULL);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	check = pthread_join(threads[0],NULL);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	check = pthread_join(threads[1],NULL);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	check = pthread_join(threads[2],NULL);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	check = pthread_join(threads[3],NULL);
+		if(check != 0){exit(EXIT_FAILURE);}
+
+	return g_cmp_couples_keys;
+}
+/* Quad core */
+
 void * calculate_encA(void * message)
 {
     uint24 * entry = (uint24 *) (message);
