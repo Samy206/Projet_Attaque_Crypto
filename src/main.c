@@ -15,7 +15,7 @@ int main()
     cryptedB.x = 0x1CF0CC;
     int nb;
 
-    int number_configured_procs = 2;//getNumberOfCores();
+    int number_configured_procs = 4;//getNumberOfCores();
 
     switch(number_configured_procs)
     {
