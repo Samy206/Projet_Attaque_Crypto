@@ -20,10 +20,10 @@ typedef struct
     unsigned int x:5;
 }uint5;
 
-typedef struct uint80
+typedef struct
 {
-    unsigned long int x:64;
-    unsigned short int y:16;
+    unsigned long int high:40; //79 -> 40
+    unsigned long int low:40;  //39 -> 0
 }uint80;
 
 /* Structure contenant la clé maître
@@ -32,6 +32,7 @@ typedef struct
 {
     uint24 master_key;
     uint24 sub_keys[11];
+    int status;
 }Key;
 
 /* Initialise la structure Key. */
@@ -39,5 +40,7 @@ void init_key(Key * key, uint24 value);
 
 /* Algorithme de cadencement de clés. */
 void key_schedule(Key * key);
+void key_schedule(Key * key);
+void print_string(long int x);
 
 #endif

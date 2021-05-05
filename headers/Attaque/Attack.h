@@ -44,6 +44,6 @@ void *search_low_q_A(void *nothing);
 
 int search_collisions();
 
-void check_couples(uint24 message2, uint24 crypted2);
+void check_couples(int * tab_index, uint24 message2, uint24 crypted2);
 
 #endif
