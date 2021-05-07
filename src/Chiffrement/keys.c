@@ -11,9 +11,10 @@ const uint4 s_box[16] = { {12} , {5} , {6} , {11} , {9} , {0} ,
 
 void init_key(Key * key, uint24 value)
 {
+    key->status = 1;
     key->master_key.x = value.x;
     key_schedule(key);
-    key->status = 1;
+
 }
 
 
@@ -28,7 +29,8 @@ void key_schedule(Key * key)
 
     uint4 entry_sbox;
 
-    key->sub_keys[0].x = (k_register.low >> 16);
+
+    key->sub_keys[0].x = 0;
 
     for(int i = 1 ; i < 11 ; i++)
     {
@@ -59,11 +61,6 @@ void key_schedule(Key * key)
         entry_sbox.x |= s_box[k_register.high >> 36].x;
         k_register.high &= 0x0FFFFFFFFF;
         k_register.high |= ((uint64_t) (entry_sbox.x) << 36);
-        /*printf("K_register after sbox    : ");
-        print_string(k_register.high);
-        printf(" ");
-        print_string(k_register.low);
-        printf("\n");*/
 
         k_register.low <<= 21;
         k_register.low >>= 36;
@@ -71,19 +68,14 @@ void key_schedule(Key * key)
         k_register.low <<= 15;
         k_register.low |= (backup.low & 1099511136255);
 
-        /*printf("K_register after xored   : ");
-        print_string(k_register.high);
-        printf(" ");
-        print_string(k_register.low);
-        printf("\n\n");*/
-
-        key->sub_keys[i].x = (k_register.low >> 16 );
+        key->sub_keys[i].x = 0  ;
+        key->sub_keys[i].x |= (k_register.low >> 16);
     }
 }
 
 void print_string(long int x)
 {
-    for(int i = 23 ; i >= 0 ; i--)
+    for(int i = 39 ; i >= 0 ; i--)
     {
         if(x >= pow(2,i))
         {

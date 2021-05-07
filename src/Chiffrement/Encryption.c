@@ -54,12 +54,12 @@ uint24 present(Key * key, uint24 message)
 
     for(int i = 0 ; i < 10 ; i++)
     {
-        state.x ^= key->sub_keys[i].x;
+        state.x = state.x ^ key->sub_keys[i].x;
         substitution(&state);
         permutation(&state);
     }
 
-    state.x ^= key->sub_keys[10].x;
+    state.x = state.x ^ key->sub_keys[10].x;
     return state;
 }
 

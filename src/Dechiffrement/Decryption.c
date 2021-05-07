@@ -60,13 +60,13 @@ uint24 un_present(Key * key, uint24 message)
     uint24 state;
     state.x = message.x;
 
-    state.x ^= key->sub_keys[10].x;
+    state.x = state.x ^ key->sub_keys[10].x;
 
     for(int i = 9 ; i >= 0 ; i--)
     {
         un_permutation(&state);
         un_substitution(&state);
-        state.x ^= key->sub_keys[i].x;
+        state.x =state.x ^key->sub_keys[i].x;
     }
 
     return state;
