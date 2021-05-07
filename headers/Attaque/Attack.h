@@ -20,6 +20,13 @@ Element;
 
 #define SIZE 16777215
 
+struct check_couples_struct
+{
+	Couple_keys tableau[5];
+	uint24 message2;
+	uint24 crypted2;
+};
+
 Couple_keys couples[SIZE];
 
 Element g_liste_encryption[SIZE];
@@ -51,5 +58,15 @@ void *search_low_q_A(void *nothing);*/
 int search_collisions();
 
 int check_couples(Couple_keys *tableau, uint24 message2, uint24 crypted2);
+
+/* Wait a struct check_couples_struct */
+void *check_couples_d_A(void *arg);
+void *check_couples_d_B(void *arg);
+void *check_couples_q_A(void *arg);
+void *check_couples_q_B(void *arg);
+void *check_couples_q_C(void *arg);
+void *check_couples_q_D(void *arg);
+void test_keys(Couple_keys * tableau, int cmp);
+
 
 #endif

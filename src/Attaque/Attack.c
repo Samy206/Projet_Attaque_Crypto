@@ -368,7 +368,7 @@ int search_collisions_quad_core()
 		if(check != 0){exit(EXIT_FAILURE);}
 
 	return g_cmp_couples_keys;
-}
+}*/
 /* Quad core */
 
 int check_couples(Couple_keys *tableau, uint24 message2, uint24 crypted2)
@@ -389,4 +389,151 @@ int check_couples(Couple_keys *tableau, uint24 message2, uint24 crypted2)
 	}
 	return cmp;
 
+}
+
+void *check_couples_d_A(void *arg)
+{
+	struct check_couples_struct *input = malloc(sizeof(struct check_couples_struct *));
+	input = (struct check_couples_struct *) arg;
+
+	uint24 result;
+
+    	int *cmp = malloc(sizeof(int));
+	*cmp = 0;
+	for(int i = 0; i < g_cmp_couples_keys/2; i++)
+	{
+	    result.x = two_present(&keys[couples[i].indexA],&keys[couples[i].indexB],input->message2).x;
+
+		if(result.x == input->crypted2.x)
+		{
+            input->tableau[*cmp].indexA = couples[i].indexA;
+            input->tableau[*cmp].indexB = couples[i].indexB;
+            *cmp = *cmp + 1;
+		}
+	}
+	
+	pthread_exit(cmp);
+}
+
+void *check_couples_d_B(void *arg)
+{
+	struct check_couples_struct *input = malloc(sizeof(struct check_couples_struct *));
+	input = (struct check_couples_struct *) arg;
+
+	uint24 result;
+
+    	int *cmp = malloc(sizeof(int));
+	*cmp = 0;
+	for(int i = g_cmp_couples_keys/2; i < g_cmp_couples_keys; i++)
+	{
+	    result.x = two_present(&keys[couples[i].indexA],&keys[couples[i].indexB],input->message2).x;
+
+		if(result.x == input->crypted2.x)
+		{
+            input->tableau[*cmp].indexA = couples[i].indexA;
+            input->tableau[*cmp].indexB = couples[i].indexB;
+            *cmp = *cmp + 1;
+		}
+	}
+	
+	pthread_exit(cmp);
+}
+
+void *check_couples_q_A(void *arg)
+{
+	struct check_couples_struct *input = malloc(sizeof(struct check_couples_struct *));
+	input = (struct check_couples_struct *) arg;
+
+	uint24 result;
+
+    	int cmp = 0;
+	for(int i = 0; i < g_cmp_couples_keys/4; i++)
+	{
+	    result.x = two_present(&keys[couples[i].indexA],&keys[couples[i].indexB],input->message2).x;
+
+		if(result.x == input->crypted2.x)
+		{
+            input->tableau[cmp].indexA = couples[i].indexA;
+            input->tableau[cmp].indexB = couples[i].indexB;
+            cmp++;
+		}
+	}
+	Couple_keys param[5];
+	test_keys(param, cmp);	
+	pthread_exit(NULL);
+}
+
+void *check_couples_q_B(void *arg)
+{
+	struct check_couples_struct *input = malloc(sizeof(struct check_couples_struct *));
+	input = (struct check_couples_struct *) arg;
+
+	uint24 result;
+
+    	int cmp = 0;
+	for(int i = g_cmp_couples_keys/4; i < g_cmp_couples_keys/2; i++)
+	{
+	    result.x = two_present(&keys[couples[i].indexA],&keys[couples[i].indexB],input->message2).x;
+
+		if(result.x == input->crypted2.x)
+		{
+            input->tableau[cmp].indexA = couples[i].indexA;
+            input->tableau[cmp].indexB = couples[i].indexB;
+            cmp++;
+		}
+	}
+	Couple_keys param[5];
+	test_keys(param, cmp);	
+
+	pthread_exit(NULL);
+}
+
+void *check_couples_q_C(void *arg)
+{
+	struct check_couples_struct *input = malloc(sizeof(struct check_couples_struct *));
+	input = (struct check_couples_struct *) arg;
+
+	uint24 result;
+
+    	int cmp = 0;
+	for(int i = g_cmp_couples_keys/2; i < 3*g_cmp_couples_keys/4; i++)
+	{
+	    result.x = two_present(&keys[couples[i].indexA],&keys[couples[i].indexB],input->message2).x;
+
+		if(result.x == input->crypted2.x)
+		{
+            input->tableau[cmp].indexA = couples[i].indexA;
+            input->tableau[cmp].indexB = couples[i].indexB;
+            cmp++;
+		}
+	}
+	Couple_keys param[5];
+	test_keys(param, cmp);	
+
+	pthread_exit(NULL);
+}
+
+void *check_couples_q_D(void *arg)
+{
+	struct check_couples_struct *input = malloc(sizeof(struct check_couples_struct *));
+	input = (struct check_couples_struct *) arg;
+
+	uint24 result;
+
+    	int cmp = 0;
+	for(int i = 3*g_cmp_couples_keys/4; i < g_cmp_couples_keys; i++)
+	{
+	    result.x = two_present(&keys[couples[i].indexA],&keys[couples[i].indexB],input->message2).x;
+
+		if(result.x == input->crypted2.x)
+		{
+            input->tableau[cmp].indexA = couples[i].indexA;
+            input->tableau[cmp].indexB = couples[i].indexB;
+            cmp++;
+		}
+	}
+	Couple_keys param[5];
+	test_keys(param, cmp);	
+
+	pthread_exit(NULL);
 }

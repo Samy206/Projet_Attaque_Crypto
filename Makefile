@@ -11,7 +11,7 @@ run: compile
 	@./$(T)main
 
 compile: $(S)main.c $(T)keys.o $(H)$(C)keys.h $(H)$(C)Encryption.h $(H)$(D)Decryption.h  $(T)Encryption.o $(T)Attack.o $(H)Usefull_tables.h $(T)Decryption.o
-	@gcc -Wall -Wextra -g -I$(H) $(S)main.c $(T)keys.o $(T)Attack.o $(T)Encryption.o $(T)Decryption.o -o $(T)main -pthread
+	@gcc -Wall -Wextra -g -I$(H) $(S)main.c $(T)keys.o $(T)Attack.o $(T)Encryption.o $(T)Decryption.o -o $(T)main -pthread -lm
 
 $(T)keys.o : $(H)$(C)keys.h  $(H)Usefull_tables.h
 	@gcc -Wall -Wextra -g -I$(H) $(S)$(C)keys.c -o $(T)keys.o -c  -pthread

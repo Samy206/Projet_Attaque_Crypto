@@ -6,6 +6,7 @@
 #include "../headers/Attaque/Attack.h"
 #include "Attaque/Count_cores.c"
 #include <time.h>
+#include <pthread.h>
 
 
 void search(int *tableau1, int * tableau2)
@@ -52,7 +53,7 @@ void test_keys(Couple_keys * tableau, int cmp)
         tmp.x = tableau[i].indexB;
         init_key(keyB,tmp);
 
-        if( (two_present(keyA,keyB,messageA).x == cryptedA.x) && ((two_present(keyA,keyB,messageB).x) == cryptedB.x))
+        if( ((two_present(keyA,keyB,messageA).x) == cryptedA.x) && ((two_present(keyA,keyB,messageB).x) == cryptedB.x))
             printf("heureux gagnant : (%x,%x) \n",keyA->master_key.x,keyB->master_key.x);
     }
 
@@ -88,12 +89,48 @@ void full_program()
     time_spent = 0;
     begin = clock();
 
-
+/*
     nb = check_couples(couple_check,messageB,cryptedB);
     end = clock();
     time_spent += (double)(end - begin) / CLOCKS_PER_SEC;
     printf("\n----The elapsed time is %f seconds on checking couples----\n", time_spent);
     test_keys(couple_check,nb);
+  */  
+
+    //Couples_check Dual Core
+/*    struct check_couples_struct threads_params[2];
+    pthread_t t_couples[2];
+    pthread_create(&t_couples[0], NULL, check_couples_d_A, &threads_params[0]);
+    pthread_create(&t_couples[1], NULL, check_couples_d_B, &threads_params[1]);
+
+    void *nb1 = malloc(sizeof(int));
+    void *nb2 = malloc(sizeof(int));
+
+    pthread_join(t_couples[0], nb1);
+    pthread_join(t_couples[1], nb2);
+    nb1 = (int *) nb1;
+    nb2 = (int *) nb2;
+    //test_keys(couple_check,nb);
+
+*/
+
+    //Couples_check Quad Core
+    struct check_couples_struct threads_params[4];
+    pthread_t t_couples[4];
+    pthread_create(&t_couples[0], NULL, check_couples_q_A, &threads_params[0]);
+    pthread_create(&t_couples[1], NULL, check_couples_q_B, &threads_params[1]);
+    pthread_create(&t_couples[2], NULL, check_couples_q_C, &threads_params[2]);
+    pthread_create(&t_couples[3], NULL, check_couples_q_D, &threads_params[3]);
+
+    pthread_join(t_couples[0], NULL);
+    pthread_join(t_couples[1], NULL);
+    pthread_join(t_couples[2], NULL);
+    pthread_join(t_couples[3], NULL);
+
+    end = clock();
+    time_spent += (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("\n----The elapsed time is %f seconds on checking couples----\n", time_spent);
+    
 }
 
 void test_encryption()
