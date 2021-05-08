@@ -4,7 +4,6 @@
 #include "../headers/Chiffrement/Encryption.h"
 #include "../headers/Dechiffrement/Decryption.h"
 #include "../headers/Attaque/Attack.h"
-#include "Attaque/Count_cores.c"
 #include <time.h>
 #include <pthread.h>
 
