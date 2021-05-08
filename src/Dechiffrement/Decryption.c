@@ -5,7 +5,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
+/*
+    Les commentaires de ce fichier seront identiques à ceux de "Encryption.c", les petites différences étant ;
+        - L'usage de tableaux réciproques à la s_box et la p_box.
+        - L'ordre différent des appels au sous-fonctions dans le déchiffrement.
+ */
 const uint4 un_s_box[16] = {{5}, {14}, {15}, {8}, {12}, {1}, {2}, {13}, {11},{4},
                             {6}, {3}, {0},{7}, {9}, {10}};
 
@@ -35,7 +39,6 @@ void un_substitution(uint24 * state)
     uint24 tmp ;
     tmp.x = 0;
     int offset = 4;
-    int i = 0;
     int shift;
 
     while(offset <= 24)
@@ -48,7 +51,6 @@ void un_substitution(uint24 * state)
         tmp.x <<= 4 ;
         tmp.x |= entry_sbox.x;
 
-        i++;
         offset += 4;
     }
 
