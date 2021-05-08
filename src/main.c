@@ -89,13 +89,13 @@ void full_program()
     time_spent = 0;
     begin = clock();
 
-/*
+
     nb = check_couples(couple_check,messageB,cryptedB);
     end = clock();
     time_spent += (double)(end - begin) / CLOCKS_PER_SEC;
     printf("\n----The elapsed time is %f seconds on checking couples----\n", time_spent);
     test_keys(couple_check,nb);
-  */  
+    
 
     //Couples_check Dual Core
 /*    struct check_couples_struct threads_params[2];
@@ -113,7 +113,7 @@ void full_program()
     //test_keys(couple_check,nb);
 
 */
-
+/*
     //Couples_check Quad Core
     struct check_couples_struct threads_params[4];
     pthread_t t_couples[4];
@@ -130,8 +130,82 @@ void full_program()
     end = clock();
     time_spent += (double)(end - begin) / CLOCKS_PER_SEC;
     printf("\n----The elapsed time is %f seconds on checking couples----\n", time_spent);
-    
+*/    
 }
+
+void full_program_q()
+{
+    Couple_keys couple_check[5];
+    double time_spent = 0.0;
+
+    uint24 messageA, messageB, cryptedA, cryptedB;
+    messageA.x = 0x684D0F;
+    cryptedA.x = 0x66FB2E;
+
+    messageB.x = 0xDB4819;
+    cryptedB.x = 0x75D43B;
+
+    int nb;
+    int number_configured_procs = 4;
+    clock_t begin = clock();
+    printf("\n----Quad core detected----\n");
+    calculate_possibilities_quad_core(messageA, cryptedA);
+    clock_t end = clock();
+    time_spent += (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("\n----The elapsed time is %f seconds on calcul----\n", time_spent);
+    time_spent = 0;
+    begin =  clock();
+    nb = search_collisions_quad_core();
+    end = clock();
+    time_spent += (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("\n----The elapsed time is %f seconds on search collisions : %d---\n", time_spent,nb);
+    time_spent = 0;
+    begin = clock();
+
+
+    nb = check_couples(couple_check,messageB,cryptedB);
+    end = clock();
+    time_spent += (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("\n----The elapsed time is %f seconds on checking couples----\n", time_spent);
+    test_keys(couple_check,nb);
+    
+
+    //Couples_check Dual Core
+/*    struct check_couples_struct threads_params[2];
+    pthread_t t_couples[2];
+    pthread_create(&t_couples[0], NULL, check_couples_d_A, &threads_params[0]);
+    pthread_create(&t_couples[1], NULL, check_couples_d_B, &threads_params[1]);
+
+    void *nb1 = malloc(sizeof(int));
+    void *nb2 = malloc(sizeof(int));
+
+    pthread_join(t_couples[0], nb1);
+    pthread_join(t_couples[1], nb2);
+    nb1 = (int *) nb1;
+    nb2 = (int *) nb2;
+    //test_keys(couple_check,nb);
+
+*/
+/*
+    //Couples_check Quad Core
+    struct check_couples_struct threads_params[4];
+    pthread_t t_couples[4];
+    pthread_create(&t_couples[0], NULL, check_couples_q_A, &threads_params[0]);
+    pthread_create(&t_couples[1], NULL, check_couples_q_B, &threads_params[1]);
+    pthread_create(&t_couples[2], NULL, check_couples_q_C, &threads_params[2]);
+    pthread_create(&t_couples[3], NULL, check_couples_q_D, &threads_params[3]);
+
+    pthread_join(t_couples[0], NULL);
+    pthread_join(t_couples[1], NULL);
+    pthread_join(t_couples[2], NULL);
+    pthread_join(t_couples[3], NULL);
+
+    end = clock();
+    time_spent += (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("\n----The elapsed time is %f seconds on checking couples----\n", time_spent);
+*/    
+}
+
 
 void test_encryption()
 {
@@ -174,5 +248,23 @@ void test_keys_sujet()
 
 int main()
 {
-    full_program();
+   
+    printf("\nPlease enter a number of threads : (2 or 4)\n");
+    int *q_th = malloc(sizeof(int));
+    scanf("%d", q_th);
+
+    if(*q_th == 2)
+    {
+        full_program();
+    return 0;
+    }
+
+    if(*q_th == 4)
+    {
+        full_program_q();
+    return 0;
+    }
+
+    printf("\nError on number of threads\n");
+return -1;
 }

@@ -69,8 +69,8 @@ void *search_high_d(void *nothing)
 	int i,j;
 	i = 0;
 	j = 0;
-    //pthread_mutex_t m_id;
-    //pthread_mutex_init(&m_id, NULL);
+    pthread_mutex_t m_id;
+    pthread_mutex_init(&m_id, NULL);
     while ((i < SIZE/2) && (j < SIZE))
     {
         if (g_liste_encryption[i].value.x < g_liste_decryption[j].value.x)
@@ -81,11 +81,11 @@ void *search_high_d(void *nothing)
 
         else
         {
-            //pthread_mutex_lock(&m_id);
+            pthread_mutex_lock(&m_id);
             couples[g_cmp_couples_keys].indexA = g_liste_encryption[i].index_key;
             couples[g_cmp_couples_keys].indexB = g_liste_decryption[j].index_key;
             g_cmp_couples_keys++;
-            //pthread_mutex_unlock(&m_id);
+            pthread_mutex_unlock(&m_id);
             i++;
         }
     }
@@ -97,8 +97,8 @@ void *search_low_d(void *nothing)
     int i,j;
     i = SIZE/2;
     j = 0;
-    //pthread_mutex_t m_id;
-    //pthread_mutex_init(&m_id, NULL);
+    pthread_mutex_t m_id;
+    pthread_mutex_init(&m_id, NULL);
     while ((i < SIZE) && (j < SIZE))
     {
         if (g_liste_encryption[i].value.x < g_liste_decryption[j].value.x)
@@ -109,11 +109,11 @@ void *search_low_d(void *nothing)
 
         else
         {
-            //pthread_mutex_lock(&m_id);
+            pthread_mutex_lock(&m_id);
             couples[g_cmp_couples_keys].indexA = g_liste_encryption[i].index_key;
             couples[g_cmp_couples_keys].indexB = g_liste_decryption[j].index_key;
             g_cmp_couples_keys++;
-            //pthread_mutex_unlock(&m_id);
+            pthread_mutex_unlock(&m_id);
             i++;
         }
     }
@@ -140,7 +140,7 @@ int search_collisions_dual_core()
 }
 /* Dual core */
 
-/* Quad core
+/* Quad core */
 void *calculate_enc_q_A(void *message)
 {
 	uint24 *entry = (uint24 *) (message);
@@ -150,7 +150,7 @@ void *calculate_enc_q_A(void *message)
 	{
 	    tmp.x = i;
 	    init_key(&keys[i],tmp);
-	    g_liste_encryption[i].x = present(&keys[i],*entry).x;
+	    g_liste_encryption[i].value.x = present(&keys[i],*entry).x;
 	}
     return NULL;
 }
@@ -164,7 +164,7 @@ void *calculate_dec_q_A(void *crypted)
 	{
 		tmp.x = i;
 		init_key(&keys[i],tmp);
-		g_liste_decryption[i].x = un_present(&keys[i],*entry).x;
+		g_liste_decryption[i].value.x = un_present(&keys[i],*entry).x;
 	}
     return NULL;
 }
@@ -178,7 +178,7 @@ void *calculate_enc_q_B(void *message)
 	{
 	    tmp.x = i;
 	    init_key(&keys[i],tmp);
-	    g_liste_encryption[i].x = present(&keys[i],*entry).x;
+	    g_liste_encryption[i].value.x = present(&keys[i],*entry).x;
 	}
     return NULL;
 }
@@ -192,7 +192,7 @@ void *calculate_dec_q_B(void *crypted)
 	{
 		tmp.x = i;
 		init_key(&keys[i],tmp);
-		g_liste_decryption[i].x = un_present(&keys[i],*entry).x;
+		g_liste_decryption[i].value.x = un_present(&keys[i],*entry).x;
 	}
     return NULL;
 }
@@ -240,10 +240,10 @@ void *search_high_q_A(void *nothing)
     j = 0;
     while (i < SIZE/4 && j < SIZE)
     {
-        if (g_liste_encryption[i].x < g_liste_decryption[j].x)
+        if (g_liste_encryption[i].value.x < g_liste_decryption[j].value.x)
             i++;
 
-        else if (g_liste_encryption[i].x > g_liste_decryption[j].x)
+        else if (g_liste_encryption[i].value.x > g_liste_decryption[j].value.x)
             j++;
 
         else
@@ -266,10 +266,10 @@ void *search_high_q_B(void *nothing)
     j = 0;
     while (i < SIZE/2 && j < SIZE)
     {
-        if (g_liste_encryption[i].x < g_liste_decryption[j].x)
+        if (g_liste_encryption[i].value.x < g_liste_decryption[j].value.x)
             i++;
 
-        else if (g_liste_encryption[i].x > g_liste_decryption[j].x)
+        else if (g_liste_encryption[i].value.x > g_liste_decryption[j].value.x)
             j++;
 
         else
@@ -291,10 +291,10 @@ void *search_low_q_A(void *nothing)
     j = 0;
     while ( (i < 3*SIZE/4)  && j < SIZE)
     {
-        if (g_liste_encryption[i].x < g_liste_decryption[j].x)
+        if (g_liste_encryption[i].value.x < g_liste_decryption[j].value.x)
             i++;
 
-        else if (g_liste_encryption[i].x > g_liste_decryption[j].x)
+        else if (g_liste_encryption[i].value.x > g_liste_decryption[j].value.x)
             j++;
 
         else
@@ -318,10 +318,10 @@ void *search_low_q_B(void *nothing)
     j = 0;
     while ( i < SIZE  && j < SIZE)
     {
-        if (g_liste_encryption[i].x < g_liste_decryption[j].x)
+        if (g_liste_encryption[i].value.x < g_liste_decryption[j].value.x)
             i++;
 
-        else if (g_liste_encryption[i].x > g_liste_decryption[j].x)
+        else if (g_liste_encryption[i].value.x > g_liste_decryption[j].value.x)
             j++;
 
         else
@@ -368,7 +368,7 @@ int search_collisions_quad_core()
 		if(check != 0){exit(EXIT_FAILURE);}
 
 	return g_cmp_couples_keys;
-}*/
+}
 /* Quad core */
 
 int check_couples(Couple_keys *tableau, uint24 message2, uint24 crypted2)
@@ -382,6 +382,7 @@ int check_couples(Couple_keys *tableau, uint24 message2, uint24 crypted2)
 
 		if(result.x == crypted2.x)
 		{
+			printf("\n Couple de clés trouvées \n");
             tableau[cmp].indexA = couples[i].indexA;
             tableau[cmp].indexB = couples[i].indexB;
             cmp++;
